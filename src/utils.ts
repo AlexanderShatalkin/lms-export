@@ -1,11 +1,43 @@
 import * as fs from "fs";
-import { Document, Packer, Paragraph, TextRun, ImageRun, HorizontalPosition, PageBreak } from "docx";
+import { Document, Packer, Paragraph, TextRun, ImageRun, HorizontalPosition, PageBreak, Numbering } from "docx";
 import sharp from 'sharp';
 import {Work} from './interfaces'
-import {createP, createTitle, createParagraphParts} from './docParts'
+import {createP, createTitle, createParagraphParts, createListItem} from './docParts'
 
 const docElements:any[] = []
 
+
+const bulletNumbering = new Numbering({
+    config: [
+        {
+            reference: "bulletList",
+            levels: [
+                {
+                    level: 0,
+                    format: "bullet",
+                    text: "•",
+                    alignment: "left",
+                },
+            ],
+        },
+    ],
+});
+
+const decimalNumbering = new Numbering({
+    config: [
+        {
+            reference: "numberedList",
+            levels: [
+                {
+                    level: 0,
+                    format: "decimal", 
+                    text: "%1.",       
+                    alignment: "left",
+                },
+            ],
+        },
+    ],
+});
 
 
 async function prepareDocElementsForWork(work:Work){
@@ -70,17 +102,49 @@ export async function createTestDoc(content:string[]){
     await fs.writeFileSync("test.docx", buffer);
 
     
-    Packer.toBuffer(doc).then((buffer) => {
-        fs.writeFileSync("test.docx", buffer);
-    });
+    // Packer.toBuffer(doc).then((buffer) => {
+    //     fs.writeFileSync("test.docx", buffer);
+    // });
 }
 
-export async function createTestDocument(element:any){
-    let paragraph = createParagraphParts(element);
-
-    const paragraphs = [paragraph];
+export async function createTestDocument(elements:any[]){
+    let paragraph;
+    const paragraphs:any[] = [];
+    elements.forEach(element => {
+        if (element.type == "p")
+            if (element.listStyleType)
+                paragraphs.push(...createListItem(element.children, element.listStyleType))
+            else    
+                paragraphs.push(...createParagraphParts(element.children));
+    });
 
     const doc = new Document({
+        numbering: {
+            config: [
+                {
+                    reference: "bulletList",
+                    levels: [
+                        {
+                            level: 0,
+                            format: "bullet",
+                            text: "•",
+                            alignment: "left",
+                        },
+                    ],
+                },
+                {
+                    reference: "numberedList",
+                    levels: [
+                        {
+                            level: 0,
+                            format: "decimal",
+                            text: "%1.",
+                            alignment: "left",
+                        },
+                    ],
+                },
+            ],
+        },
         sections:[
             {
                 children: paragraphs,

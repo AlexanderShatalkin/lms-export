@@ -132,7 +132,7 @@ const app = new Elysia()
   let json = require("./exampleData/editor.json");
 
   console.log('before doc')
-  const doc = await createTestDocument(json["content"][0]["children"]);
+  const doc = await createTestDocument(json["content"]);
   
   console.log('before buffer')
   const buffer:any = await Packer.toBuffer(doc);
