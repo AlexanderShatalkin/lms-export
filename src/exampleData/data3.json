@@ -1,0 +1,15 @@
+[
+    {
+      "type": "p",
+      "children": {
+        "value": "Below is an image."
+      }
+    },
+    {
+      "type": "img",
+      "children": {
+        "value": "./src/exampleData/3.jpg"
+      }
+    }
+  ]
+  

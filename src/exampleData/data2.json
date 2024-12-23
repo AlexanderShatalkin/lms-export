@@ -1,0 +1,21 @@
+[
+    {
+      "type": "p",
+      "children": {
+        "value": "This is the first paragraph."
+      }
+    },
+    {
+      "type": "p",
+      "children": {
+        "value": "This is the second paragraph, containing more text."
+      }
+    },
+    {
+      "type": "img",
+      "children": {
+        "value": "./src/exampleData/2.jpg"
+      }
+    }
+  ]
+  
