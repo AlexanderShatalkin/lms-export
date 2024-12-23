@@ -2,10 +2,9 @@ import * as fs from "fs";
 import { Document, Packer, Paragraph, TextRun, ImageRun, HorizontalPosition, PageBreak, Numbering } from "docx";
 import sharp from 'sharp';
 import {Work} from './interfaces'
-import {createP, createTitle, createParagraphParts, createListItem} from './docParts'
+import {createP, createTitle, getPWordElement, getImg} from './docParts'
 
 const docElements:any[] = []
-
 
 const bulletNumbering = new Numbering({
     config: [
@@ -107,16 +106,26 @@ export async function createTestDoc(content:string[]){
     // });
 }
 
+type MappingFunction = (element: any) => any;
+
+const mapping: { [key: string]: MappingFunction } = {};
+
+mapping["p"] = (element:any) => getPWordElement(element);
+mapping["img"] = (element: any) => getImg(element);
+
+
 export async function createTestDocument(elements:any[]){
-    let paragraph;
     const paragraphs:any[] = [];
-    elements.forEach(element => {
-        if (element.type == "p")
-            if (element.listStyleType)
-                paragraphs.push(...createListItem(element.children, element.listStyleType))
-            else    
-                paragraphs.push(...createParagraphParts(element.children));
-    });
+    
+    for (const element of elements){
+        if (mapping[element.type]){
+            console.log(element.type)
+            const result = await mapping[element.type](element)
+            console.log(element.type)
+            paragraphs.push(...result)
+            console.log(element.type)
+        }
+    };
 
     const doc = new Document({
         numbering: {
@@ -151,7 +160,6 @@ export async function createTestDocument(elements:any[]){
             }
         ]
     });
-    console.log('here');
 
     return doc
 

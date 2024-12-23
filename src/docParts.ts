@@ -1,4 +1,4 @@
-import { Document, Packer, Paragraph, TextRun, ImageRun, HorizontalPosition, PageBreak, Alignment, UnderlineType, Numbering } from "docx";
+import { Document, Packer, Paragraph, TextRun, ImageRun, HorizontalPosition, PageBreak, Alignment, UnderlineType, Numbering, Media } from "docx";
 import sharp from 'sharp';
 import * as fs from "fs";
 
@@ -9,13 +9,11 @@ export function createP(paragraph:any){
 
 
 function getNumberingType(listStyleType:string): string{
-    console.log(listStyleType);
     const listStyleTypes: {[key:string]: string} = {
         "disc": "bulletList",
         "decimal": "numberedList",
     }
 
-    // console.log(listStyleTypes[listStyleType] || "");
     return listStyleTypes[listStyleType] || "bulletList";
 }
 
@@ -39,23 +37,19 @@ function mapHexToHighlight(hexColor: string): string | undefined {
     return colorMapping[hexColor.toUpperCase()] || undefined;
 }
 
-function getParagraph(child:any){
-    return new Paragraph({children: [getTextRun(child)] });
-}   
 
-function getListItem(child:any, listType:string){
+function getP(child:any, listType:string){
     return new Paragraph({
         children: [getTextRun(child)],
-        numbering:{
+        numbering: listType ? {
             reference: getNumberingType(listType),
             level:0,
-        }
+        } : undefined,
     })
 }
 
 
 function getTextRun(child:any){
-    console.log(child)
     let wordChild = new TextRun({
             text: child.text,
             bold: child.bold ? true : false,
@@ -70,32 +64,16 @@ function getTextRun(child:any){
             color: child.color ? child.color : "000000",
             highlight : mapHexToHighlight(child.backgroundColor || "#FFFFFF"),
     })
-
     return wordChild;
-
 }
 
-export function createParagraphParts(children:Array<any>){
-    let wordChildren:Array<any> = [];
-
-
-    children.forEach(child => {
-        console.log('here');
-        let wordChild = getParagraph(child)
-        wordChildren.push(wordChild);
-    });
-
-    return wordChildren;
-
-}
-
-export function createListItem(children:Array<any>, type:string){
-    let wordChildren:Array<any> = [];
-
+export function getPWordElement(element:any){
+    const wordChildren:Array<any> = [];
+    const children:any[] = element.children;
+    const listType = element.listStyleType;
 
     children.forEach(child => {
-        console.log('here');
-        let wordChild = getListItem(child, type)
+        let wordChild = getP(child, listType)
         wordChildren.push(wordChild);
     });
 
@@ -115,20 +93,24 @@ export function createTitle(paragraph: string){
 }
 
 
-async function createImg(imgUrl:any){
-    const imgMetadata = await sharp(imgUrl).metadata();
-    const {width, height} = {width:imgMetadata.width, height:imgMetadata.height}
+export async function getImg(element:any){
+    // const imgMetadata = await sharp(element.url).metadata();
+    const base64Data = element.url.replace(/^data:image\/\w+;base64,/, '');
+    // const base64Data = element.url;
+    const imageBuffer = Buffer.from(base64Data, 'base64');
+
+    const metadata = await sharp(imageBuffer).metadata();
+    const {width, height} = {width:metadata.width, height:metadata.height}
     console.log({width, height});
-    const img = fs.readFileSync(imgUrl)
     const image = new ImageRun({
-        data: img,
+        data: imageBuffer,
         transformation:{
             width: width || 0,
             height: height || 0,
         }
     })
-    return new Paragraph({
+    return [new Paragraph({
         children: [image],
-    })
+    })]
 
 }
