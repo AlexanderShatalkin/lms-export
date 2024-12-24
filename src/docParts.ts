@@ -1,4 +1,4 @@
-import { Document, Packer, Paragraph, TextRun, ImageRun, HorizontalPosition, PageBreak, Alignment, UnderlineType, Numbering, Media } from "docx";
+import { WidthType, TableCell,Table, TableRow, Packer, Paragraph, TextRun, ImageRun, HorizontalPosition, PageBreak, Alignment, UnderlineType, Numbering, MathRun, Math } from "docx";
 import sharp from 'sharp';
 import * as fs from "fs";
 
@@ -72,6 +72,8 @@ export function getPWordElement(element:any){
     const children:any[] = element.children;
     const listType = element.listStyleType;
 
+    console.log(element)
+
     children.forEach(child => {
         let wordChild = getP(child, listType)
         wordChildren.push(wordChild);
@@ -114,3 +116,47 @@ export async function getImg(element:any){
     })]
 
 }
+
+export function getEquation(element:any){
+    return [new Paragraph({
+        children: [new Math({
+            children: [
+                new MathRun(element.texExpression)
+            ]
+    })]
+    })]
+}
+
+function getTr(element:any){
+    const cells:any[] = []
+    element.children.forEach((td:any) => {
+        cells.push(getTd(td));
+    });
+    return new TableRow({
+        children: cells,
+    })
+}
+
+function getTd(element:any){
+    const paragraphs:any[] = []
+    element.children.forEach((e:any) => {
+        paragraphs.push(...getPWordElement(e));
+    });
+    return new TableCell({
+        children: paragraphs,
+    })
+}
+
+export function getTable(element:any){
+    const rows:any[] = []
+    element.children.forEach((row:any) => {
+        rows.push(getTr(row));
+    });
+    return [new Table({
+        rows: rows,
+        width: {
+            size: 100,
+            type: WidthType.PERCENTAGE,
+        },
+    })]
+}   

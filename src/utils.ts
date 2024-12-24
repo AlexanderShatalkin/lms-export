@@ -2,7 +2,7 @@ import * as fs from "fs";
 import { Document, Packer, Paragraph, TextRun, ImageRun, HorizontalPosition, PageBreak, Numbering } from "docx";
 import sharp from 'sharp';
 import {Work} from './interfaces'
-import {createP, createTitle, getPWordElement, getImg} from './docParts'
+import {createP, createTitle, getPWordElement, getImg, getEquation, getTable} from './docParts'
 
 const docElements:any[] = []
 
@@ -112,6 +112,8 @@ const mapping: { [key: string]: MappingFunction } = {};
 
 mapping["p"] = (element:any) => getPWordElement(element);
 mapping["img"] = (element: any) => getImg(element);
+mapping["equation"] = (element: any) => getEquation(element);
+mapping["table"] = (element: any) => getTable(element);
 
 
 export async function createTestDocument(elements:any[]){
