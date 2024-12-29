@@ -1,6 +1,7 @@
-import { WidthType, TableCell,Table, TableRow, Packer, Paragraph, TextRun, ImageRun, HorizontalPosition, PageBreak, Alignment, UnderlineType, Numbering, MathRun, Math } from "docx";
+import { WidthType, TableCell,Table, TableRow, Packer, Paragraph, TextRun, ImageRun, HorizontalPosition, PageBreak, Alignment, UnderlineType, Numbering, MathRun, Math, Header, HeadingLevel } from "docx";
 import sharp from 'sharp';
 import * as fs from "fs";
+
 
 export function createP(paragraph:any){
     return new Paragraph(paragraph);
@@ -17,9 +18,23 @@ function getNumberingType(listStyleType:string): string{
     return listStyleTypes[listStyleType] || "bulletList";
 }
 
-const mappings = {
-    
+type HeadingLevelType = typeof HeadingLevel[keyof typeof HeadingLevel];
+
+function getHeaderLevel(header:string): HeadingLevelType  | undefined{
+    const listHeaderTypes: {[key:string]: HeadingLevelType} ={
+        "h1": HeadingLevel.HEADING_1,
+        "h2": HeadingLevel.HEADING_2,
+        "h3": HeadingLevel.HEADING_3,
+        "h4": HeadingLevel.HEADING_4,
+        "h5": HeadingLevel.HEADING_5,
+        "h6": HeadingLevel.HEADING_6,
+    }    
+
+    return listHeaderTypes[header] || undefined
 }
+
+
+
 
 function mapHexToHighlight(hexColor: string): string | undefined {
     const colorMapping: { [key: string]: string } = {
@@ -67,6 +82,7 @@ function getTextRun(child:any){
     return wordChild;
 }
 
+
 export function getPWordElement(element:any){
     const wordChildren:Array<any> = [];
     const children:any[] = element.children;
@@ -80,18 +96,6 @@ export function getPWordElement(element:any){
     });
 
     return wordChildren;
-}
-
-export function createTitle(paragraph: string){
-    return new Paragraph({
-        alignment: 'center',
-        children: [
-            new TextRun({
-                text: paragraph,
-                size: 32,
-            })
-        ]
-    })
 }
 
 
@@ -115,6 +119,42 @@ export async function getImg(element:any){
         children: [image],
     })]
 
+}
+
+
+export function createTitle(paragraph: string){
+    return new Paragraph({
+        alignment: 'center',
+        children: [
+            new TextRun({
+                text: paragraph,
+                size: 32,
+            })
+        ]
+    })
+}
+
+
+export async function getHeader(element:any){
+    const children:any[] = []
+    element.children.forEach((child:any) => {
+        children.push(getTextRun(child))
+    });
+    return [new Paragraph({
+        children: children,
+        heading: getHeaderLevel(element.type),
+    })
+    ];
+}
+
+type Point = [id:number, x:number, y:number]
+export async function getPaint(element:any){
+    const data = element.data;
+}
+
+async function getImgFromPoints(points:Point[]){
+    
+    
 }
 
 export function getEquation(element:any){
