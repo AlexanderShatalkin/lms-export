@@ -54,8 +54,9 @@ function mapHexToHighlight(hexColor: string): string | undefined {
 
 
 function getP(child:any, listType:string){
+
     return new Paragraph({
-        children: [getTextRun(child)],
+        children: [...getTextRun(child)],
         numbering: listType ? {
             reference: getNumberingType(listType),
             level:0,
@@ -63,10 +64,12 @@ function getP(child:any, listType:string){
     })
 }
 
-
 function getTextRun(child:any){
-    let wordChild = new TextRun({
-            text: child.text,
+    const lines = child.text.split("\n");
+    return lines.map((line: string, index: number) => {
+    const  wordChild = new TextRun({
+            break: index > 0 ? 1: 0,
+            text: line,
             bold: child.bold ? true : false,
             italics: child.italic ? true : false,
             underline: {
@@ -80,6 +83,7 @@ function getTextRun(child:any){
             highlight : mapHexToHighlight(child.backgroundColor || "#FFFFFF"),
     })
     return wordChild;
+    })
 }
 
 
@@ -87,8 +91,6 @@ export function getPWordElement(element:any){
     const wordChildren:Array<any> = [];
     const children:any[] = element.children;
     const listType = element.listStyleType;
-
-    console.log(element)
 
     children.forEach(child => {
         let wordChild = getP(child, listType)
@@ -107,7 +109,6 @@ export async function getImg(element:any){
 
     const metadata = await sharp(imageBuffer).metadata();
     const {width, height} = {width:metadata.width, height:metadata.height}
-    console.log({width, height});
     const image = new ImageRun({
         data: imageBuffer,
         transformation:{
@@ -138,7 +139,7 @@ export function createTitle(paragraph: string){
 export async function getHeader(element:any){
     const children:any[] = []
     element.children.forEach((child:any) => {
-        children.push(getTextRun(child))
+        children.push(...getTextRun(child))
     });
     return [
         new Paragraph({
@@ -153,7 +154,7 @@ export async function getBlockquote(element: any){
     element.children.forEach((element:any) => {
         const quoteElement = element;
         quoteElement.italic = true;
-        children.push(getTextRun(quoteElement));
+        children.push(...getTextRun(quoteElement));
     });
     return [
         new Paragraph({
