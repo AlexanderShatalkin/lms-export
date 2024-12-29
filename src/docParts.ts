@@ -140,10 +140,26 @@ export async function getHeader(element:any){
     element.children.forEach((child:any) => {
         children.push(getTextRun(child))
     });
-    return [new Paragraph({
-        children: children,
-        heading: getHeaderLevel(element.type),
-    })
+    return [
+        new Paragraph({
+            children: children,
+            heading: getHeaderLevel(element.type),
+        })
+    ];
+}
+
+export async function getBlockquote(element: any){
+    const children:any[] = []
+    element.children.forEach((element:any) => {
+        const quoteElement = element;
+        quoteElement.italic = true;
+        children.push(getTextRun(quoteElement));
+    });
+    return [
+        new Paragraph({
+            indent: {left:720, right: 720},
+            children:children,
+        })
     ];
 }
 
