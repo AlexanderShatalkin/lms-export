@@ -1,5 +1,6 @@
 import { WidthType, TableCell,Table, TableRow, Packer, Paragraph, TextRun, ImageRun,
-     HorizontalPosition, PageBreak, Alignment, UnderlineType, Numbering, MathRun, Math as DocxMath, Header, HeadingLevel } from "docx";
+     HorizontalPosition, PageBreak, Alignment, UnderlineType, Numbering, MathRun, Math as DocxMath, Header, HeadingLevel, 
+     BorderStyle} from "docx";
 import sharp from 'sharp';
 import * as fs from "fs";
 import { getPaintImg, getImageDimensions } from "./imageGeneration";
@@ -241,3 +242,15 @@ export function getTable(element:any){
         },
     })]
 }   
+
+export function getHorizontalRule(element:any){
+    return [new Paragraph({
+        border: {
+            top:{ 
+                style: BorderStyle.SINGLE,
+                size: 6,
+                space: 1,
+            }
+        }
+    })];
+}
