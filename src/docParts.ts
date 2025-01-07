@@ -102,9 +102,7 @@ export function getPWordElement(element:any){
 
 
 export async function getImg(element:any){
-    // const imgMetadata = await sharp(element.url).metadata();
     const base64Data = element.url.replace(/^data:image\/\w+;base64,/, '');
-    // const base64Data = element.url;
     const imageBuffer = Buffer.from(base64Data, 'base64');
 
     const metadata = await sharp(imageBuffer).metadata();
@@ -119,8 +117,8 @@ export async function getImg(element:any){
     return [new Paragraph({
         children: [image],
     })]
-
 }
+
 
 
 export function createTitle(paragraph: string){

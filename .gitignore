@@ -54,3 +54,5 @@ migrations
 
 #docx
 *.docx
+
+/prisma
