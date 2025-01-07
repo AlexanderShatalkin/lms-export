@@ -111,7 +111,7 @@ mapping["p"] = (element:any) => getPWordElement(element);
 mapping["img"] = (element: any) => getImg(element);
 mapping["equation"] = (element: any) => getEquation(element);
 mapping["table"] = (element: any) => getTable(element);
-// mapping["paint"] = (element: any) => getPaint(element);
+mapping["paint"] = (element: any) => getPaint(element);
 mapping["h1"] = mapping["h2"] = mapping["h3"] = mapping["h4"] = mapping["h5"] = mapping["h6"] = (element: any) => getHeader(element);
 mapping["blockquote"] = (element: any) => getBlockquote(element);
 

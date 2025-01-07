@@ -16,7 +16,7 @@ interface Point{
     y:number,
 }
 
-export async function getImg(data:any[]){
+export async function getPaintImg(data:any[]){
     const size = getImageDimensions(data);
     
     const canvas = createCanvas(size.width, size.height);
@@ -61,7 +61,7 @@ function convertPathToPoints(path:Path): Point[]{
     return points;
 }
 
-function getImageDimensions(data: Path[]): {width: number, height: number}{
+export function getImageDimensions(data: Path[]): {width: number, height: number}{
     let maxX = 0;
     let maxY = 0;
     

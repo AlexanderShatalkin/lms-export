@@ -4,7 +4,6 @@ import {createWordDocumentForGroupWorks, createTestDoc, createTestDocument} from
 import { Document, Packer, Paragraph, TextRun, ImageRun } from "docx";
 import { PrismaClient } from '../prisma/client'
 import sharp from 'sharp';
-import { getImg } from "./imageGeneration";
 
 const prisma = new PrismaClient() 
 
@@ -148,15 +147,6 @@ const app = new Elysia()
       "Content-Disposition": 'attachment; filename="GeneratedDocument.docx"',
     },
   });
-})
-
-
-.get("/testImg", async()=>{
-  let json = require("./exampleData/editor.json");
-  const content = json["content"];
-  const paint:any = content.find((item:any) => item.type == "paint");
-  await getImg(paint.data);
-  return "done";
 })
 
 .listen({idleTimeout: 100, port: 3000});

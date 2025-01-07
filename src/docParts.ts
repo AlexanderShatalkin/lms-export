@@ -1,6 +1,8 @@
-import { WidthType, TableCell,Table, TableRow, Packer, Paragraph, TextRun, ImageRun, HorizontalPosition, PageBreak, Alignment, UnderlineType, Numbering, MathRun, Math, Header, HeadingLevel } from "docx";
+import { WidthType, TableCell,Table, TableRow, Packer, Paragraph, TextRun, ImageRun,
+     HorizontalPosition, PageBreak, Alignment, UnderlineType, Numbering, MathRun, Math as DocxMath, Header, HeadingLevel } from "docx";
 import sharp from 'sharp';
 import * as fs from "fs";
+import { getPaintImg, getImageDimensions } from "./imageGeneration";
 
 
 export function createP(paragraph:any){
@@ -162,19 +164,43 @@ export async function getBlockquote(element: any){
     ];
 }
 
-type Point = [id:number, x:number, y:number]
 export async function getPaint(element:any){
     const data = element.data;
-}
+    const buffer = await getPaintImg(data);
+    
+    const size = getImageDimensions(data);
 
-async function getImgFromPoints(points:Point[]){
-    
-    
+    const maxWidth = 600;  
+    const maxHeight = 800; 
+
+    let scaleFactor = 1;
+    if (size.width > maxWidth || size.height > maxHeight) {
+        const widthScale = maxWidth / size.width;
+        const heightScale = maxHeight / size.height;
+        scaleFactor = Math.min(widthScale, heightScale); 
+    }
+
+    // Calculate new width and height based on scale factor
+    const newWidth = size.width * scaleFactor;
+    const newHeight = size.height * scaleFactor;
+
+    const image = new ImageRun({
+        data: buffer,
+        transformation:{
+            width: newWidth,
+            height: newHeight,
+        }
+    });
+
+    return [new Paragraph({
+        children: [image],
+    })]
+
 }
 
 export function getEquation(element:any){
     return [new Paragraph({
-        children: [new Math({
+        children: [new DocxMath({
             children: [
                 new MathRun(element.texExpression)
             ]
