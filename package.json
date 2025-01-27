@@ -6,6 +6,7 @@
     "dev": "bun run --watch src/index.ts"
   },
   "dependencies": {
+    "@elysiajs/swagger": "^1.2.0",
     "@prisma/client": "^5.22.0",
     "archiver": "^7.0.1",
     "bun": "^1.1.42",

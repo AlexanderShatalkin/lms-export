@@ -2,8 +2,9 @@ import * as fs from "fs";
 import { Document, Packer, Paragraph, TextRun, ImageRun, HorizontalPosition, PageBreak, Numbering } from "docx";
 import sharp from 'sharp';
 import {Work} from './interfaces'
-import {createP, createTitle, getPWordElement, getImg, getEquation, getTable, getPaint, getHeader, getBlockquote, getHorizontalRule} from './docParts'
+import {createP, createTitle, getPWordElement, getImg, getEquation, getTable, getPaint, getHeader, getBlockquote, getHorizontalRule, getSectionForTask} from './docParts'
 import styles from "./styles";
+import { Task } from "../prisma/client";
 
 const docElements:any[] = []
 
@@ -163,4 +164,50 @@ export async function createTestDocument(elements:any[]){
 
     return doc
 
+}
+
+export async function generateDocForTasks(tasks:Task[]){
+    
+    const sections = [];
+
+    for (const task of tasks) {
+        const paragraphs = await getSectionForTask(task); 
+        sections.push({
+            properties: {}, 
+            children: paragraphs, 
+        });
+    }
+
+    const doc = new Document({
+        styles:styles,
+        numbering: {
+            config: [
+                {
+                    reference: "bulletList",
+                    levels: [
+                        {
+                            level: 0,
+                            format: "bullet",
+                            text: "•",
+                            alignment: "left",
+                        },
+                    ],
+                },
+                {
+                    reference: "numberedList",
+                    levels: [
+                        {
+                            level: 0,
+                            format: "decimal",
+                            text: "%1.",
+                            alignment: "left",
+                        },
+                    ],
+                },
+            ],
+        },
+        sections:sections,
+    });
+
+    return doc
 }

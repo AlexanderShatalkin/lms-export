@@ -1,9 +1,23 @@
 import { WidthType, TableCell,Table, TableRow, Packer, Paragraph, TextRun, ImageRun,
      HorizontalPosition, PageBreak, Alignment, UnderlineType, Numbering, MathRun, Math as DocxMath, Header, HeadingLevel, 
-     BorderStyle} from "docx";
+     BorderStyle, SectionType } from "docx";
 import sharp from 'sharp';
 import * as fs from "fs";
 import { getPaintImg, getImageDimensions } from "./imageGeneration";
+import { Task } from "../prisma/client";
+
+type MappingFunction = (element: any) => any;
+
+const mapping: { [key: string]: MappingFunction } = {};
+
+mapping["p"] = (element:any) => getPWordElement(element);
+mapping["img"] = (element: any) => getImg(element);
+mapping["equation"] = (element: any) => getEquation(element);
+mapping["table"] = (element: any) => getTable(element);
+mapping["paint"] = (element: any) => getPaint(element);
+mapping["h1"] = mapping["h2"] = mapping["h3"] = mapping["h4"] = mapping["h5"] = mapping["h6"] = (element: any) => getHeader(element);
+mapping["blockquote"] = (element: any) => getBlockquote(element);
+mapping["hr"] = (element: any) => getHorizontalRule(element);
 
 
 export function createP(paragraph:any){
@@ -253,4 +267,26 @@ export function getHorizontalRule(element:any){
             }
         }
     })];
+}
+
+export async function getSectionForTask(task:Task){
+    const section = [new Paragraph({
+        heading: HeadingLevel.HEADING_1,
+        children: [
+            new TextRun({
+                text: task.name,
+            })
+        ]
+    })]
+    const content = (task.content as Record<string, any>).content;
+    for(const element of content){
+        if (mapping[element.type]){
+            const result = await mapping[element.type](element)
+            section.push(...result)
+        }
+    }
+
+
+    return section;
+    console.log(section)
 }

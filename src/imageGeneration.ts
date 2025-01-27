@@ -29,10 +29,6 @@ export async function getPaintImg(data:any[]){
         addPathToCanvas(path, ctx);
     });
 
-    // const out = fs.createWriteStream('output.png');
-    // const stream = canvas.createPNGStream();
-    // stream.pipe(out);
-
     return canvas.toBuffer('image/png');
 
 }
