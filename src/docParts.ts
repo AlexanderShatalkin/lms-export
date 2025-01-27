@@ -53,22 +53,21 @@ function getHeaderLevel(header:string): HeadingLevelType  | undefined{
 
 
 
-function mapHexToHighlight(hexColor: string): string | undefined {
-    const colorMapping: { [key: string]: string } = {
-        "#FFFF00": "yellow",  
-        "#00FFFF": "cyan",    
-        "#00FF00": "green",   
-        "#FF0000": "red",  
-        "#FE0000": "red",   
-        "#FF00FF": "magenta", 
-        "#0000FF": "blue",    
-        "#FFFFFF": "white",   
-        "#000000": "black",   
+function mapHexToHighlight(hexColor: string): "none" | "black" | "blue" | "cyan" | "darkBlue" | "darkCyan" | "darkGray" | "darkGreen" | "darkMagenta" | "darkRed" | "darkYellow" | "green" | "lightGray" | "magenta" | "red" | "white" | "yellow" | undefined {
+    const colorMapping: { [key: string]: "none" | "black" | "blue" | "cyan" | "darkBlue" | "darkCyan" | "darkGray" | "darkGreen" | "darkMagenta" | "darkRed" | "darkYellow" | "green" | "lightGray" | "magenta" | "red" | "white" | "yellow" } = {
+        "#FFFF00": "yellow",
+        "#00FFFF": "cyan",
+        "#00FF00": "green",
+        "#FF0000": "red",
+        "#FE0000": "red",
+        "#FF00FF": "magenta",
+        "#0000FF": "blue",
+        "#FFFFFF": "white",
+        "#000000": "black",
     };
 
-    return colorMapping[hexColor.toUpperCase()] || undefined;
+    return colorMapping[hexColor.toUpperCase()] || "none";  // Возвращаем "none" по умолчанию
 }
-
 
 function getP(child:any, listType:string){
 
@@ -129,7 +128,8 @@ export async function getImg(element:any){
         transformation:{
             width: width || 0,
             height: height || 0,
-        }
+        },
+        type: 'jpg'
     })
     return [new Paragraph({
         children: [image],
@@ -204,7 +204,8 @@ export async function getPaint(element:any){
         transformation:{
             width: newWidth,
             height: newHeight,
-        }
+        },
+        type: 'jpg'
     });
 
     return [new Paragraph({
