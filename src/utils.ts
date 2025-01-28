@@ -1,10 +1,10 @@
 import * as fs from "fs";
 import { Document, Packer, Paragraph, TextRun, ImageRun, HorizontalPosition, PageBreak, Numbering } from "docx";
 import sharp from 'sharp';
-import {Work} from './interfaces'
-import {createP, createTitle, getPWordElement, getImg, getEquation, getTable, getPaint, getHeader, getBlockquote, getHorizontalRule, getSectionForTask} from './docParts'
+import {createP, createTitle, getPWordElement, getImg, getEquation, getTable, getPaint, getHeader, getBlockquote, getHorizontalRule, getSectionForTask, getSectionForAnswer} from './docParts'
 import styles from "./styles";
-import { Task } from "../prisma/client";
+import { Task, UserWorkAnswer } from "../prisma/client";
+import { Answer } from "./interfaces";
 
 const docElements:any[] = []
 
@@ -41,45 +41,45 @@ const decimalNumbering = new Numbering({
 });
 
 
-async function prepareDocElementsForWork(work:Work){
-    const docElements:any[] = [];
-    docElements.push(createTitle(work.work));
-    console.log(work)
-    work.tasks.forEach(task =>{
-        docElements.push(createP(task.task));
-        task.content.content.forEach(element => {
+// async function prepareDocElementsForWork(work:Work){
+//     const docElements:any[] = [];
+//     docElements.push(createTitle(work.work));
+//     console.log(work)
+//     work.tasks.forEach(task =>{
+//         docElements.push(createP(task.task));
+//         task.content.content.forEach(element => {
 
-            if (element.type === "p"){
+//             if (element.type === "p"){
 
-                element.children.forEach(child => {
-                    docElements.push(createP(child.text));
-                });
-            }
-        });
-    })
-    return docElements;
-}
+//                 element.children.forEach(child => {
+//                     docElements.push(createP(child.text));
+//                 });
+//             }
+//         });
+//     })
+//     return docElements;
+// }
 
-export async function createWordDocumentForGroupWorks(tasksContent:Work[]){
-    let docElements:any[] = [];
-    for (const work of tasksContent){
+// export async function createWordDocumentForGroupWorks(tasksContent:Work[]){
+//     let docElements:any[] = [];
+//     for (const work of tasksContent){
         
-        docElements = docElements.concat(await prepareDocElementsForWork(work));
-        docElements.push(
-            new Paragraph({
-                children: [new PageBreak()],
-            }),
-        )
-    }
-    const doc = new Document({
-        sections:[
-            {
-                children:docElements,
-            },
-        ],
-    });
-    return doc;
-}
+//         docElements = docElements.concat(await prepareDocElementsForWork(work));
+//         docElements.push(
+//             new Paragraph({
+//                 children: [new PageBreak()],
+//             }),
+//         )
+//     }
+//     const doc = new Document({
+//         sections:[
+//             {
+//                 children:docElements,
+//             },
+//         ],
+//     });
+//     return doc;
+// }
 
 
 export async function createTestDoc(content:string[]){
@@ -166,6 +166,7 @@ export async function createTestDocument(elements:any[]){
 
 }
 
+
 export async function generateDocForTasks(tasks:Task[]){
     
     const sections = [];
@@ -210,4 +211,49 @@ export async function generateDocForTasks(tasks:Task[]){
     });
 
     return doc
+}
+
+export async function generateDocForUserAnswers(userAnswers: any[]){
+    const sections = [];
+    for (const answer of userAnswers) {
+        const paragraphs = await getSectionForAnswer(answer); 
+        sections.push({
+            properties: {}, 
+            children: paragraphs, 
+        });
+    }
+
+    const doc = new Document({
+        styles:styles,
+        numbering: {
+            config: [
+                {
+                    reference: "bulletList",
+                    levels: [
+                        {
+                            level: 0,
+                            format: "bullet",
+                            text: "•",
+                            alignment: "left",
+                        },
+                    ],
+                },
+                {
+                    reference: "numberedList",
+                    levels: [
+                        {
+                            level: 0,
+                            format: "decimal",
+                            text: "%1.",
+                            alignment: "left",
+                        },
+                    ],
+                },
+            ],
+        },
+        sections:sections,
+    });
+
+    return doc;
+
 }

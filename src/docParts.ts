@@ -4,7 +4,8 @@ import { WidthType, TableCell,Table, TableRow, Packer, Paragraph, TextRun, Image
 import sharp from 'sharp';
 import * as fs from "fs";
 import { getPaintImg, getImageDimensions } from "./imageGeneration";
-import { Task } from "../prisma/client";
+import { Score, Task, User, UserWorkAnswer } from "../prisma/client";
+import {Answer} from "./interfaces";
 
 type MappingFunction = (element: any) => any;
 
@@ -290,4 +291,40 @@ export async function getSectionForTask(task:Task){
 
     return section;
     console.log(section)
+}
+
+
+
+
+export async function getSectionForAnswer(answer: Answer){
+    const section = await getSectionForTask(answer.task);
+    section.push(...getHorizontalRule(""));
+    
+    if (answer.score){
+        section.push(new Paragraph({
+            children:[
+                new TextRun(answer.score.value.toString()),
+            ]
+        }));
+    }
+    else{
+        section.push(new Paragraph({
+            children: [new TextRun("не оценено")]
+        }))
+    }
+
+    if (answer.answer){
+
+        const content = (answer.answer as Record<string, any>).content;
+
+        for(const element of (content || [])){
+
+            if (mapping[element.type]){
+                const result = await mapping[element.type](element)
+                section.push(...result)
+            }
+        }
+    }
+
+    return section;
 }

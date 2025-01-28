@@ -1,12 +1,16 @@
 import { Elysia, t } from "elysia";
 import {swagger} from "@elysiajs/swagger";
 import * as fs from "fs";
-import {createWordDocumentForGroupWorks, createTestDoc, createTestDocument, generateDocForTasks} from './utils';
+import {createTestDoc, createTestDocument, generateDocForTasks, generateDocForUserAnswers} from './utils';
 import { Document, Packer, Paragraph, TextRun, ImageRun } from "docx";
-import { PrismaClient, TaskTemplate } from '../prisma/client'
+import { PrismaClient, TaskTemplate, User, Task, Prisma } from '../prisma/client'
 import sharp from 'sharp';
+import { Answer } from "./interfaces";
+
 
 const prisma = new PrismaClient() 
+
+
 
 const app = new Elysia()
 .use(swagger())
@@ -16,7 +20,17 @@ const app = new Elysia()
   })
 
 .get("/studyGroup", async() => {
-  const studyGroups = await prisma.studyGroup.findMany({});
+  const studyGroups = await prisma.studyGroup.findMany({
+    select: {
+      id: true,
+      name: true,
+      studyGroupMembers: {
+        select: {
+          initiator: true,
+        }
+      },
+    }
+  });
   return studyGroups;
 })
 
@@ -87,6 +101,67 @@ const app = new Elysia()
   return work;
 })
 
+
+.get("/getActivitiesBords", async() => {
+  const activiites = await prisma.activityBoard.findMany();
+  return activiites;
+})
+
+.get("getUserWorkAnswers", async() => {
+  const answers = await prisma.userWorkAnswer.findMany();
+  return answers;
+})
+
+.get("getGroupAnswers/:studyGroupId", async({params: {studyGroupId}}) => {
+  // const studyGroup = await prisma.studyGroup.findUnique({
+  //   where: {
+  //     id: studyGroupId,
+  //   },
+  //   select: {
+  //     course: {
+  //       select: {
+  //         taskTemplates: {
+  //           select: {
+  //             id: true,
+  //             name: true,
+  //             tasks: {
+  //               select:{
+  //                 userAnswers: true,
+  //               }
+  //             },
+  //           }
+  //         },
+  //       },
+  //     },
+  //   },
+  // });
+
+  const answers = await prisma.userWorkAnswer.findMany({
+    where: {
+      user: {
+        studyGroup: {
+          some: {
+            id: studyGroupId,
+          }
+        }
+      }
+    }
+  })
+  return answers;
+
+})
+
+.get("/users", async() => {
+  return await prisma.user.findMany({
+    select:{
+      id: true,
+      role: true,
+      studyGroup: true,
+      studyGroupMember: true,
+    }
+  });
+})
+
 .get("/studyWork/:id",  async({params:{id}}) => {
   const work = await prisma.studyWork.findUnique({
     where:{
@@ -139,46 +214,6 @@ const app = new Elysia()
 
 .get("/getWorks/:studyGroupId", async({params:{studyGroupId}}) =>{
 
-  const worksVariants = await prisma.workVariant.findMany({
-    where:{
-      work: {
-        studyGroupId: studyGroupId,
-      },
-    },
-    include: {
-      tasks: true,
-      work:{
-        select:{
-          name: true,
-        },
-      },
-    },
-  });
-
-
-  const tasks:any = [];
-  console.log(worksVariants)
-  worksVariants.forEach(work =>{
-    const workTasks:any = [];
-    work.tasks.forEach(task => {
-      workTasks.push({task: task.name, content: task.content});
-    });
-    tasks.push({work: work.work.name, tasks: workTasks})
-  })
-  console.log('before creation')
-  const doc = await createWordDocumentForGroupWorks(tasks);
-  const buffer:any = await Packer.toBuffer(doc);
-
-  await fs.writeFileSync("work.docx", buffer);
-
-
-
-
-  console.log('after creation')
-  // ctx.header('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-  // ctx.header('Content-Disposition', 'attachment; filename=document.docx');
-  // ctx.body = buffer;
-  return Bun.file("work.docx");
 },
 {
   params: t.Object({
@@ -244,6 +279,44 @@ const app = new Elysia()
   // return studyGroup?.course.taskTemplates[0];
 
 })
+
+.get("/userAnswersDoc/:userId", async({params: {userId}}) => {
+  const answers = await prisma.userWorkAnswer.findMany({
+    where:{
+      userId: userId,
+    },
+    select:{
+      user: true,
+      task: true,
+      answer: true,
+      score: true,
+    }
+  });
+
+  if (answers){
+    const doc = await generateDocForUserAnswers(answers)
+    
+    const buffer:any = await Packer.toBuffer(doc);
+    return new Response(buffer, {
+      headers: {
+        "Content-Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "Content-Disposition": 'attachment; filename="GeneratedDocument.docx"',
+      },
+    });
+
+  }
+
+},
+{
+  params: t.Object({
+    userId: t.Number()
+  })
+}
+
+)
+
+
+
 
 .listen({idleTimeout: 100, port: 3000});
 
