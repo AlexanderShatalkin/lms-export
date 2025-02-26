@@ -315,7 +315,7 @@ const app = new Elysia()
 }
 )
 .get("testScorm", async() => {
-  const scorm = new ScormGenerator("../scormData", {});
+  const scorm = new ScormGenerator("./scormData", {});
   scorm.generate();
 })
 .listen({idleTimeout: 100, port: 3000});

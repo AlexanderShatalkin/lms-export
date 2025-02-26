@@ -33,9 +33,12 @@ export default class ScormGenerator{
     }
 
     private generateMainPage():void{
+
+        
         const mainPageGenerator = new MainPageGenerator(this.path, "Main page", []);
         const html = mainPageGenerator.generate();
         const filePath = path.join(this.path, "index.html");
+        console.log(filePath);
         fs.writeFile(filePath, html, (err) => {
             if (err) {
                 console.error(err);
