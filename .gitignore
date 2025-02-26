@@ -56,3 +56,7 @@ migrations
 *.docx
 
 /prisma
+
+/scormData
+
+*.zip

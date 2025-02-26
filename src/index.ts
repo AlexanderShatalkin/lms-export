@@ -6,7 +6,8 @@ import { Document, Packer, Paragraph, TextRun, ImageRun } from "docx";
 import { PrismaClient, TaskTemplate, User, Task, Prisma } from '../prisma/client'
 import sharp from 'sharp';
 import { Answer } from "./interfaces";
-
+import ScormGenerator from "./scormGenerator/scormGenerator";
+// import scormPackage from 'scorm-package';
 
 const prisma = new PrismaClient() 
 
@@ -312,12 +313,11 @@ const app = new Elysia()
     userId: t.Number()
   })
 }
-
 )
-
-
-
-
+.get("testScorm", async() => {
+  const scorm = new ScormGenerator("../scormData", {});
+  scorm.generate();
+})
 .listen({idleTimeout: 100, port: 3000});
 
 
