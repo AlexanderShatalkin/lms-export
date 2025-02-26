@@ -221,6 +221,24 @@ const app = new Elysia()
     studyGroupId: t.String()
   })
 })
+.get("/getCourse", async() => {
+  const studyGroup = await prisma.studyGroup.findMany({
+    select: {
+      course: {
+        select: {
+          taskTemplates: {
+            select: {
+              id: true,
+              name: true,
+              tasks: true,
+            }
+          },
+        },
+      },
+    },
+  });
+  return studyGroup
+})
 
 .get("/testDoc", async ()=>{
   // await createTestDoc(content);
@@ -314,9 +332,21 @@ const app = new Elysia()
   })
 }
 )
+
 .get("testScorm", async() => {
-  const scorm = new ScormGenerator("./scormData", {});
+  const works = await prisma.workVariant.findMany({
+    select:{
+      id: true,
+      name: true,
+      tasks: true,
+    }
+  });
+  const course = {works: works};
+  const scorm = new ScormGenerator("./scormData", course);
+  console.log('before generate');
   scorm.generate();
+  console.log('after generation')
+  return works;
 })
 .listen({idleTimeout: 100, port: 3000});
 

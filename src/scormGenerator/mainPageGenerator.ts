@@ -4,12 +4,11 @@ import Handlebars from "handlebars";
 import path from "path";
 import fs from "fs";
 
-export default class MainPageGenerator extends PageGenerator{
+export default class MainPageGenerator implements PageGenerator{
     private title: string;
     private works: any[];
     
-    constructor(path: string, title: string, works: any[]){
-        super(path);
+    constructor(title: string, works: any[]){
         this.title = title;
         this.works = works;
     }
