@@ -7,6 +7,9 @@ import { PrismaClient, TaskTemplate, User, Task, Prisma } from '../prisma/client
 import sharp from 'sharp';
 import { Answer } from "./interfaces";
 import ScormGenerator from "./scormGenerator/scormGenerator";
+import {writeFile} from "fs/promises"
+
+import PCreator from "./scormGenerator/htmlMaper/pCreator";
 // import scormPackage from 'scorm-package';
 
 const prisma = new PrismaClient() 
@@ -221,23 +224,32 @@ const app = new Elysia()
     studyGroupId: t.String()
   })
 })
-.get("/getCourse", async() => {
-  const studyGroup = await prisma.studyGroup.findMany({
+.get("/getCourseWorks/:courseId", async({params: {courseId}}) => {
+  const course = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
     select: {
-      course: {
-        select: {
-          taskTemplates: {
-            select: {
-              id: true,
-              name: true,
+      id: true,
+      name: true,
+      works: {
+        include: {
+          workVariants: {
+            include: {
               tasks: true,
-            }
+            },
           },
         },
       },
     },
   });
-  return studyGroup
+
+  return course;
+})
+
+.get("/getCourses", async() => {
+  const courses = await prisma.course.findMany();
+  return courses;
 })
 
 .get("/testDoc", async ()=>{
@@ -347,6 +359,20 @@ const app = new Elysia()
   scorm.generate();
   console.log('after generation')
   return works;
+})
+
+.get("/testHtml", async() => {
+  let json = require("./exampleData/editor.json");
+  let content = json["content"];
+  const pCreator = new PCreator();
+  let html = "";
+  for(const child of content){
+    if (child.type === "p"){
+      html += await pCreator.generate(child);
+    }
+  }
+  await writeFile("./test.html", html);
+  return html
 })
 .listen({idleTimeout: 100, port: 3000});
 
