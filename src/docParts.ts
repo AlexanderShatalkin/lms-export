@@ -70,10 +70,16 @@ function mapHexToHighlight(hexColor: string): "none" | "black" | "blue" | "cyan"
     return colorMapping[hexColor.toUpperCase()] || "none";  // Возвращаем "none" по умолчанию
 }
 
-function getP(child:any, listType:string){
+function getP(children:any, listType:string){
+
+    const textRuns:any[] = [];
+    children.forEach((child:any) => {
+        textRuns.push(...getTextRun(child));
+    });
+
 
     return new Paragraph({
-        children: [...getTextRun(child)],
+        children: textRuns,
         numbering: listType ? {
             reference: getNumberingType(listType),
             level:0,
@@ -109,12 +115,13 @@ export function getPWordElement(element:any){
     const children:any[] = element.children;
     const listType = element.listStyleType;
 
-    children.forEach(child => {
-        let wordChild = getP(child, listType)
-        wordChildren.push(wordChild);
-    });
+    // children.forEach(child => {
+    //     let wordChild = getP(, listType)
+    //     wordChildren.push(wordChild);
+    // });
+    console.log(children);
 
-    return wordChildren;
+    return [getP(children, listType)];
 }
 
 

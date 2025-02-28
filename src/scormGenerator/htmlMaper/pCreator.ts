@@ -9,7 +9,6 @@ export default class PCreator implements HtmlCreator{
         element.children.forEach((child:any) => {
             html += this.generateTagWithStyles(child);
         });
-        // TODO: delete debbuging
         return `<div>${html}</div>`
 
 

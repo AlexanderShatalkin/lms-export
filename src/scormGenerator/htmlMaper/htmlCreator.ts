@@ -1,3 +1,3 @@
 export interface HtmlCreator{
-    generate(element: any): string;
+    generate(element: any): string | Promise<string>;
 }

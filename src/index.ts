@@ -10,6 +10,9 @@ import ScormGenerator from "./scormGenerator/scormGenerator";
 import {writeFile} from "fs/promises"
 
 import PCreator from "./scormGenerator/htmlMaper/pCreator";
+import TableCreator from "./scormGenerator/htmlMaper/tableCreator";
+import ImgCreator from "./scormGenerator/htmlMaper/imgCreator";
+import PaintCreator from "./scormGenerator/htmlMaper/paintCreator";
 // import scormPackage from 'scorm-package';
 
 const prisma = new PrismaClient() 
@@ -372,7 +375,50 @@ const app = new Elysia()
     }
   }
   await writeFile("./test.html", html);
-  return html
+  return html;
+})
+
+.get("/htmlTable", async() => {
+  let json = require("./exampleData/editor.json");
+  let content = json["content"];
+  const tableCreator = new TableCreator();
+  let html = "";
+  for(const child of content){
+    if (child.type === "table"){
+      html += await tableCreator.generate(child);
+    }
+  }
+  await writeFile("./test.html", html);
+  return html;
+})
+
+.get("htmlImg", async() => {
+  let json = require("./exampleData/editor.json");
+  let content = json["content"];
+  const imgCreator = new ImgCreator();
+  let html = "";
+  for(const child of content){
+    if (child.type === "img"){
+      html += await imgCreator.generate(child);
+    }
+  }
+  await writeFile("./test.html", html);
+  return html;
+
+})
+
+.get("htmlPaint", async() => {
+  let json = require("./exampleData/editor.json");
+  let content = json["content"];
+  const paintCreator = new PaintCreator();
+  let html = "";
+  for(const child of content){
+    if (child.type === "paint"){
+      html += await paintCreator.generate(child);
+    }
+  }
+  await writeFile("./test.html", html);
+  return html;
 })
 .listen({idleTimeout: 100, port: 3000});
 
