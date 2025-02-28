@@ -56,10 +56,9 @@ export default class ScormGenerator{
     }
 
     private async generateWorkPage(work: any):Promise<void> {
-        const generator = new WorkPageGenerator(work.name, work.tasks);
+        const generator = new WorkPageGenerator(work.id, work.name, work.tasks);
         const html = generator.generate();
         const filePath = path.join(this.path, `${work.id}.html`);
-        console.log(work.name);
         this.works.push({
             title: work.name,
             url: `${work.id}.html`,

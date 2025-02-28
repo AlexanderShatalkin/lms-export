@@ -7,12 +7,14 @@ export const workPageTemplate = `
 </head>
 
 <body>
+    <a>return</a>
     <h1>{{title}}</h1>
     <ul>
         {{#each tasks}}
-        <li>{{{this.html}}}</li>
+        <li>{{{this}}}</li>
         {{/each}}
     </ul>
+    <a href="./index.html">return</a>
 </body>
 </html>
 `
