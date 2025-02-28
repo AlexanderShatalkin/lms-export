@@ -14,6 +14,9 @@ import TableCreator from "./scormGenerator/htmlMaper/tableCreator";
 import ImgCreator from "./scormGenerator/htmlMaper/imgCreator";
 import PaintCreator from "./scormGenerator/htmlMaper/paintCreator";
 import HeaderCreator from "./scormGenerator/htmlMaper/headerCreator";
+import MathCreator from "./scormGenerator/htmlMaper/mathCreator";
+import BlockquoteCreator from "./scormGenerator/htmlMaper/blockquoteCreator";
+import HrCreator from "./scormGenerator/htmlMaper/hrCreator";
 // import scormPackage from 'scorm-package';
 
 const prisma = new PrismaClient() 
@@ -435,6 +438,20 @@ const app = new Elysia()
   await writeFile("./test.html", html);
   return html;
 
+})
+
+.get("html", async() => {
+  let json = require("./exampleData/editor.json");
+  let content = json["content"];
+  const hrCreator = new HrCreator();
+  let html = "";
+  for(const child of content){
+    if (child.type === "hr"){
+      html += await hrCreator.generate(child);
+    }
+  }
+  await writeFile("./test.html", html);
+  return html;
 })
 .listen({idleTimeout: 100, port: 3000});
 

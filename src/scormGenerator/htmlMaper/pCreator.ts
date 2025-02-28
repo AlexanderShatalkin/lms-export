@@ -1,5 +1,4 @@
 import { HtmlCreator } from "./htmlCreator";
-import fs from "fs/promises";
 
 export default class PCreator implements HtmlCreator{
 
