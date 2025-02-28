@@ -13,6 +13,7 @@ import PCreator from "./scormGenerator/htmlMaper/pCreator";
 import TableCreator from "./scormGenerator/htmlMaper/tableCreator";
 import ImgCreator from "./scormGenerator/htmlMaper/imgCreator";
 import PaintCreator from "./scormGenerator/htmlMaper/paintCreator";
+import HeaderCreator from "./scormGenerator/htmlMaper/headerCreator";
 // import scormPackage from 'scorm-package';
 
 const prisma = new PrismaClient() 
@@ -419,6 +420,21 @@ const app = new Elysia()
   }
   await writeFile("./test.html", html);
   return html;
+})
+
+.get("htmlHeader", async() => {
+  let json = require("./exampleData/editor.json");
+  let content = json["content"];
+  const headerCreator = new HeaderCreator();
+  let html = "";
+  for(const child of content){
+    if (child.type === "h2"){
+      html += await headerCreator.generate(child);
+    }
+  }
+  await writeFile("./test.html", html);
+  return html;
+
 })
 .listen({idleTimeout: 100, port: 3000});
 
