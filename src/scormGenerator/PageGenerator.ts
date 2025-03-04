@@ -1,3 +1,3 @@
 export default  interface PageGenerator{
-     generate(): Promise<string>;
+     generate(): Promise<string> | string;
 }
