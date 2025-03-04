@@ -14,9 +14,9 @@ export const mainPageTemplate = `
 
 <body>
     <h1>{{title}}</h1>
-    <ul>
+    <ul class = "task-list">
         {{#each works}}
-        <li><a href="{{this.url}}">{{this.title}}</a></li>
+        <li class = "task-item"><a href="{{this.url}}">{{this.title}}</a></li>
         {{/each}}
     </ul>
 </body>

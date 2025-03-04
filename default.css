@@ -107,3 +107,16 @@ ul, ol {
 li {
     margin-bottom: 5px;
 }
+
+.task-list{
+    /* display: flex;
+    justify-content:center;
+    align-items: center; */
+    list-style-type: none;
+}
+
+.task-item{
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}

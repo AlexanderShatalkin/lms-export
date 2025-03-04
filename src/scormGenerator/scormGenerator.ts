@@ -32,6 +32,8 @@ export default class ScormGenerator{
         //     this.generateWorkPage(work);
         // });
 
+        await this.generateStyles();
+
         for(const work of this.course.works){
             await this.generateWorkPage(work);
         }
