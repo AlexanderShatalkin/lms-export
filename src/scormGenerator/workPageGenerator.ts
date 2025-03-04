@@ -32,17 +32,6 @@ export default class WorkPageGenerator implements PageGenerator{
     }
 
     public async generate(): Promise<string>{
-        // const tasks = this.tasks.map((task:any) => {
-        //     const content = (task.content as Record<string, any>).content;
-        //     const html = content.map((element:any) => {
-        //         return this.mapping[element.type].generate(element);
-        //     }).join("");
-
-            
-        //     return `<div><h1>${task.name} </h1>${html}</div>`
-        // });
-
-
         const tasks = await Promise.all(
             this.tasks.map(async (task: any) => {
                 const content = (task.content as Record<string, any>).content;
