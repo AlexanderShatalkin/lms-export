@@ -1,0 +1,109 @@
+/* Основные стили */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 20px;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+/* Заголовки */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+h1 { font-size: 2em; }
+h2 { font-size: 1.75em; }
+h3 { font-size: 1.5em; }
+h4 { font-size: 1.25em; }
+h5 { font-size: 1.1em; }
+h6 { font-size: 1em; }
+
+/* Абзацы */
+p {
+    margin-bottom: 15px;
+}
+
+/* Изображения */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 10px 0;
+}
+
+/* Блок с формулами */
+.equation {
+    text-align: center;
+    font-style: italic;
+    margin: 10px 0;
+    background-color: #eef;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* Таблицы */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+table, th, td {
+    border: 1px solid #ccc;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+/* Рисунки (paint) */
+.paint {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+}
+
+/* Цитаты */
+blockquote {
+    font-style: italic;
+    border-left: 4px solid #999;
+    margin: 10px 0;
+    padding-left: 15px;
+    color: #666;
+}
+
+/* Горизонтальная линия */
+hr {
+    border: 0;
+    height: 1px;
+    background-color: #ccc;
+    margin: 20px 0;
+}
+
+/* Формулы MathJax */
+.mathjax {
+    display: inline-block;
+    text-align: center;
+    font-size: 1.2em;
+    margin: 10px 0;
+}
+
+/* Списки */
+ul, ol {
+    margin: 10px 0;
+    padding-left: 20px;
+}
+
+li {
+    margin-bottom: 5px;
+}

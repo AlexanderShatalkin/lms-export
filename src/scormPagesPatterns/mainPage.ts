@@ -9,6 +9,7 @@ export const mainPageTemplate = `
     <script type="text/javascript" async
         id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
     </script>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>

@@ -31,14 +31,34 @@ export default class WorkPageGenerator implements PageGenerator{
         this.mapping["hr"] = new HrCreator();
     }
 
-    public generate(): string{
-        const tasks = this.tasks.map((task:any) => {
-            const content = (task.content as Record<string, any>).content;
-            const html = content.map((element:any) => {
-                return this.mapping[element.type].generate(element);
-            }).join("");
-            return `<div><h1>${task.name} </h1>${html}</div>`
-        });
+    public async generate(): Promise<string>{
+        // const tasks = this.tasks.map((task:any) => {
+        //     const content = (task.content as Record<string, any>).content;
+        //     const html = content.map((element:any) => {
+        //         return this.mapping[element.type].generate(element);
+        //     }).join("");
+
+            
+        //     return `<div><h1>${task.name} </h1>${html}</div>`
+        // });
+
+
+        const tasks = await Promise.all(
+            this.tasks.map(async (task: any) => {
+                const content = (task.content as Record<string, any>).content;
+        
+                const htmlParts = await Promise.all(
+                    content.map(async (element: any) => {
+                        return await this.mapping[element.type].generate(element);
+                    })
+                );
+        
+                const html = htmlParts.join("");
+        
+                return `<div><h1>${task.name}</h1>${html}</div>`;
+            })
+        );
+
         console.log({id: this.id, tasks: tasks});
         const data = {
             title: this.title,

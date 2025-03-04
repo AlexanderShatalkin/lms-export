@@ -363,7 +363,7 @@ const app = new Elysia()
   const course = {works: works};
   const scorm = new ScormGenerator("./scormData", course);
   console.log('before generate');
-  scorm.generate();
+  await scorm.generate();
   console.log('after generation')
   return works;
 })
