@@ -1,7 +1,7 @@
 import { HtmlCreator } from "./htmlCreator";
 
 export default class PCreator implements HtmlCreator{
-
+    static listOrder: number = 0;
     
     generate(element: any): string {
         let html = ""
@@ -9,8 +9,6 @@ export default class PCreator implements HtmlCreator{
             html += this.generateTagWithStyles(child);
         });
         return `<div>${html}</div>`
-
-
     }
 
     private generateTagWithStyles(element: any): string{

@@ -10,6 +10,9 @@ import PaintCreator from "./htmlMaper/paintCreator";
 import HeaderCreator from "./htmlMaper/headerCreator";
 import BlockquoteCreator from "./htmlMaper/blockquoteCreator";
 import HrCreator from "./htmlMaper/hrCreator";
+import ListManager from "./htmlMaper/listManager";
+
+
 export default class WorkPageGenerator implements PageGenerator{
     private title: string;
     private tasks: any[];
@@ -35,20 +38,20 @@ export default class WorkPageGenerator implements PageGenerator{
         const tasks = await Promise.all(
             this.tasks.map(async (task: any) => {
                 const content = (task.content as Record<string, any>).content;
-        
+                const listManager = new ListManager();
                 const htmlParts = await Promise.all(
                     content.map(async (element: any) => {
-                        return await this.mapping[element.type].generate(element);
+                        const wrapTemplate = listManager.getHtmlTemplate(element);
+                        const html = await this.mapping[element.type].generate(element);
+                        return wrapTemplate.split("{{{html}}}").join(html)
                     })
                 );
         
                 const html = htmlParts.join("");
-        
                 return `<div><h1>${task.name}</h1>${html}</div>`;
             })
         );
 
-        console.log({id: this.id, tasks: tasks});
         const data = {
             title: this.title,
             tasks: tasks

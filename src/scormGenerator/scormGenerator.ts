@@ -26,7 +26,6 @@ export default class ScormGenerator{
     }
 
     public async generate():Promise<string>{
-        console.log(this.course)
         
         // this.course.works.forEach((work: any) => {
         //     this.generateWorkPage(work);
