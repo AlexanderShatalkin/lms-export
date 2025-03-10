@@ -18,7 +18,6 @@ export default class ScormGenerator{
 
     constructor(path: string, sections: any){
         this.path = path;
-        // this.course = course;
         this.works = [];
         this.sections = sections;
     }
@@ -28,16 +27,8 @@ export default class ScormGenerator{
     }
 
     public async generate():Promise<string>{
-        
-        // this.course.works.forEach((work: any) => {
-        //     this.generateWorkPage(work);
-        // });
 
         await this.generateStyles();
-
-        // for(const work of this.course.works){
-        //     await this.generateWorkPage(work);
-        // }
 
         console.log(this.sections);
         await Promise.all(this.sections.map(async (section) => {
@@ -80,8 +71,6 @@ export default class ScormGenerator{
     }
 
    private async  generateMainPage():Promise<void>{
-
-
         const mainPageGenerator = new MainPageGenerator("Main page", this.sections);
         const html = mainPageGenerator.generate();
         const filePath = path.join(this.path, "index.html");
@@ -98,10 +87,6 @@ export default class ScormGenerator{
             url: `${work.id}.html`,
         });
         await fs.writeFile(filePath, html)
-
-    }
-
-    private async generateWorkPagesSectiion(){
 
     }
 }
