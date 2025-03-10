@@ -4,23 +4,21 @@ export const mainPageTemplate = `
 <head>
     <meta charset="UTF-8">
     <title>{{title}}</title>
-    <script type="text/javascript" async
-        src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script type="text/javascript" async
-        id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-    </script>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <h1>{{title}}</h1>
-    <ul class = "task-list">
-        {{#each works}}
-        <li class = "task-item"><a href="{{this.url}}">{{this.title}}</a></li>
+    {{#each section}}
+    <div class = "section">
+    <h1 class = "section-header">{{this.workType}}</h1>
+    <ul class = "work-list">
+        {{#each this.works}}
+        <li class = "work-item"><a href="{{this.id}}.html">{{this.name}}</a></li>
         {{/each}}
     </ul>
+    </div>
+    {{/each}}
+
 </body>
 </html>
-
-
 `

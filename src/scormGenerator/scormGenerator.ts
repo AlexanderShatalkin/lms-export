@@ -13,12 +13,14 @@ export default class ScormGenerator{
     private course: any;
     private works: any[];
     private style = Style.Default;
+    private sections: {workType: string, works: any[]}[];
 
 
-    constructor(path: string, course: any){
+    constructor(path: string, sections: any){
         this.path = path;
-        this.course = course;
+        // this.course = course;
         this.works = [];
+        this.sections = sections;
     }
 
     public setStyle(style: Style){ 
@@ -33,9 +35,16 @@ export default class ScormGenerator{
 
         await this.generateStyles();
 
-        for(const work of this.course.works){
-            await this.generateWorkPage(work);
-        }
+        // for(const work of this.course.works){
+        //     await this.generateWorkPage(work);
+        // }
+
+        console.log(this.sections);
+        await Promise.all(this.sections.map(async (section) => {
+            await Promise.all(section.works.map(async (work: any) => {
+                await this.generateWorkPage(work);
+            }))
+        }));
 
         this.generateMainPage()
 
@@ -62,7 +71,7 @@ export default class ScormGenerator{
 
     private async generateStyles():Promise<void>{
         if (this.style === Style.Default){
-            const sourcePath = path.join(process.cwd(), "default.css");
+            const sourcePath = path.join(process.cwd(), "./src/static/default.css");
             const destinationDir = path.join(process.cwd(), "scormData");
             const destinationPath = path.join(destinationDir, "style.css");
     
@@ -73,14 +82,14 @@ export default class ScormGenerator{
    private async  generateMainPage():Promise<void>{
 
 
-        const mainPageGenerator = new MainPageGenerator("Main page", this.works);
+        const mainPageGenerator = new MainPageGenerator("Main page", this.sections);
         const html = mainPageGenerator.generate();
         const filePath = path.join(this.path, "index.html");
         console.log(filePath);
         await fs.writeFile(filePath, html);
     }
 
-    private async generateWorkPage(work: any, ):Promise<void> {
+    private async generateWorkPage(work: any,):Promise<void> {
         const generator = new WorkPageGenerator(work.id, work.name, work.tasks);
         const html = await generator.generate();
         const filePath = path.join(this.path, `${work.id}.html`);
@@ -89,6 +98,10 @@ export default class ScormGenerator{
             url: `${work.id}.html`,
         });
         await fs.writeFile(filePath, html)
+
+    }
+
+    private async generateWorkPagesSectiion(){
 
     }
 }

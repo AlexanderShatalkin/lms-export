@@ -40,48 +40,6 @@ const decimalNumbering = new Numbering({
     ],
 });
 
-
-// async function prepareDocElementsForWork(work:Work){
-//     const docElements:any[] = [];
-//     docElements.push(createTitle(work.work));
-//     console.log(work)
-//     work.tasks.forEach(task =>{
-//         docElements.push(createP(task.task));
-//         task.content.content.forEach(element => {
-
-//             if (element.type === "p"){
-
-//                 element.children.forEach(child => {
-//                     docElements.push(createP(child.text));
-//                 });
-//             }
-//         });
-//     })
-//     return docElements;
-// }
-
-// export async function createWordDocumentForGroupWorks(tasksContent:Work[]){
-//     let docElements:any[] = [];
-//     for (const work of tasksContent){
-        
-//         docElements = docElements.concat(await prepareDocElementsForWork(work));
-//         docElements.push(
-//             new Paragraph({
-//                 children: [new PageBreak()],
-//             }),
-//         )
-//     }
-//     const doc = new Document({
-//         sections:[
-//             {
-//                 children:docElements,
-//             },
-//         ],
-//     });
-//     return doc;
-// }
-
-
 export async function createTestDoc(content:string[]){
     const docElements:any[] = [];
     content.forEach(element => {

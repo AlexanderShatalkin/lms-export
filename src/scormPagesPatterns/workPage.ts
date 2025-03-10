@@ -15,13 +15,12 @@ export const workPageTemplate = `
 <body>
     <a href="./index.html" id="return-link">return</a>
     <hr>
-    <h1>{{title}}</h1>
-    <ul>
+    <h1 class="work-header">{{title}}</h1>
+    <ul class="task-list">
         {{#each tasks}}
         <li>{{{this}}}</li>
         {{/each}}
     </ul>
-
 </body>
 </html>
 `

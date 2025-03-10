@@ -16,7 +16,7 @@ export default class MainPageGenerator implements PageGenerator{
     public generate(): string{
         const data = {
             title: this.title,
-            works: this.works
+            section: this.works
         }
         return Handlebars.compile(mainPageTemplate)(data);
 

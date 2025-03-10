@@ -223,14 +223,6 @@ const app = new Elysia()
 }
 )
 
-.get("/getWorks/:studyGroupId", async({params:{studyGroupId}}) =>{
-
-},
-{
-  params: t.Object({
-    studyGroupId: t.String()
-  })
-})
 .get("/getCourseWorks/:courseId", async({params: {courseId}}) => {
   const course = await prisma.course.findUnique({
     where: {
@@ -257,6 +249,54 @@ const app = new Elysia()
 .get("/getCourses", async() => {
   const courses = await prisma.course.findMany();
   return courses;
+})
+
+.get("/getWorks", async() => {
+  const works = await prisma.work.findMany({
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      course: true,
+      workVariants: {
+        select: {
+          id: true,
+          name: true,
+          tasks: true,
+        },
+      },
+      studyWork: {
+        select: {
+          workType: true,
+        },
+      },
+    },
+  });
+
+  const workVariantsArrayFlatMap = works.flatMap(work => 
+    work.workVariants.map(workVariant => ({
+      name: `${work.name} ${workVariant.name}`,
+      tasks: workVariant.tasks,
+      workType: work.studyWork?.workType?.name || "Unknown",
+      description: work.description,
+    }))
+  );
+
+  const finishArray = Object.entries(workVariantsArrayFlatMap.reduce((acc: any, work) => {
+    const workType = work.workType || "Unknown";
+    if (!acc[workType]) {
+      acc[workType] = [];
+    }
+    acc[workType].push({
+      name: work.name,
+      description: work.description,
+      tasks: work.tasks,
+    });
+    return acc;
+  }, {})).map(([workType, works]) => ({ workType, works }));
+
+
+  return finishArray
 })
 
 .get("/testDoc", async ()=>{
@@ -361,11 +401,66 @@ const app = new Elysia()
     }
   });
   const course = {works: works};
+
   const scorm = new ScormGenerator("./scormData", course);
   console.log('before generate');
   await scorm.generate();
   console.log('after generation')
   return works;
+})
+
+.get("/testScormWithSections", async() => {
+  const works = await prisma.work.findMany({
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      course: true,
+      workVariants: {
+        select: {
+          id: true,
+          name: true,
+          tasks: true,
+        },
+      },
+      studyWork: {
+        select: {
+          workType: true,
+        },
+      },
+    },
+  });
+
+  const workVariantsArrayFlatMap = works.flatMap(work => 
+    work.workVariants.map(workVariant => ({
+      name: `${work.name} ${workVariant.name}`,
+      tasks: workVariant.tasks,
+      workType: work.studyWork?.workType?.name || "Unknown",
+      description: work.description,
+      id: workVariant.id,
+    }))
+  );
+
+  const finishArray = Object.entries(workVariantsArrayFlatMap.reduce((acc: any, work) => {
+    const workType = work.workType || "Unknown";
+    if (!acc[workType]) {
+      acc[workType] = [];
+    }
+    acc[workType].push({
+      name: work.name,
+      description: work.description,
+      tasks: work.tasks,
+      id: work.id,
+    });
+    return acc;
+  }, {})).map(([workType, works]) => ({ workType, works }));
+
+  const scorm = new ScormGenerator("./scormData", finishArray);
+  console.log('before generate');
+  await scorm.generate();
+  console.log('after generation')
+  return works;
+
 })
 
 .get("/testHtml", async() => {
@@ -453,6 +548,8 @@ const app = new Elysia()
   await writeFile("./test.html", html);
   return html;
 })
+
+
 .listen({idleTimeout: 100, port: 3000});
 
 

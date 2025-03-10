@@ -48,7 +48,7 @@ export default class WorkPageGenerator implements PageGenerator{
                 );
         
                 const html = htmlParts.join("");
-                return `<div><h1>${task.name}</h1>${html}</div>`;
+                return `<div><h1 class="task-header">${task.name}</h1>${html}</div>`;
             })
         );
 
