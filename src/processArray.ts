@@ -3,14 +3,14 @@ export function PrepareArrayToScormGeneration(works:any):any[]{
     work.workVariants.map((workVariant:any) => ({
       name: `${work.name} ${workVariant.name}`,
       tasks: workVariant.tasks,
-      workType: work.studyWork?.workType?.name || "Unknown",
+      workType: work.studyWork?.workType?.name || "",
       description: work.description,
       id: workVariant.id,
     }))
   );
 
   const finishArray = Object.entries(workVariantsArrayFlatMap.reduce((acc: any, work:any) => {
-    const workType = work.workType || "Unknown";
+    const workType = work.workType || "";
     if (!acc[workType]) {
       acc[workType] = [];
     }

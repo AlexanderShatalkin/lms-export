@@ -126,7 +126,7 @@ const app = new Elysia()
 }
 )
 
-.get("/testScormWithSections", async() => {
+.get("/getScormForAllCourses", async() => {
   const works = await prisma.work.findMany({
     select: {
       id: true,
