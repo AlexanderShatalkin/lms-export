@@ -11,16 +11,17 @@ enum Style{
 
 export default class ScormGenerator{
     private path: string;
-    private course: any;
+    private course: string;
     private works: any[];
     private style = Style.Default;
     private sections: {workType: string, works: any[]}[];
 
 
-    constructor(path: string, sections: any){
+    constructor(path: string, sections: any, course: string){
         this.path = path;
         this.works = [];
         this.sections = sections;
+        this.course = course;
     }
 
     public setStyle(style: Style){ 
@@ -31,7 +32,6 @@ export default class ScormGenerator{
 
         await this.generateStyles();
 
-        console.log(this.sections);
         await Promise.all(this.sections.map(async (section) => {
             await Promise.all(section.works.map(async (work: any) => {
                 await this.generateWorkPage(work);
@@ -45,7 +45,7 @@ export default class ScormGenerator{
             scopackager({
                 version: '1.2',
                 organization: 'LmsDot',
-                title: 'test',
+                title: this.course,
                 language: 'en',
                 identifier: 'example_scorm_course',
                 masteryScore: 80,
@@ -53,9 +53,8 @@ export default class ScormGenerator{
                 source: this.path, // Папка с контентом
                 package: {
                     zip: true,
-                    name: 'scorm_course', // Имя SCORM пакета
+                    name: this.course, // Имя SCORM пакета
                     outputFolder: './scormPackage', // Папка для сохранения SCORM пакета
-                    zipFilename: 'scorm_course.zip',
                 }
             }, function () {
                 console.log('SCORM пакет успешно создан!');

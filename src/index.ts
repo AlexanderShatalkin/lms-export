@@ -9,6 +9,8 @@ import { Answer } from "./interfaces";
 import ScormGenerator from "./scormGenerator/scormGenerator";
 import {writeFile} from "fs/promises"
 import { existsSync } from 'fs';
+import {rm, mkdir} from "fs/promises";
+import { PrepareArrayToScormGeneration } from "./processArray";
 
 import PCreator from "./scormGenerator/htmlMaper/pCreator";
 import TableCreator from "./scormGenerator/htmlMaper/tableCreator";
@@ -146,41 +148,29 @@ const app = new Elysia()
     },
   });
 
-  const workVariantsArrayFlatMap = works.flatMap(work => 
-    work.workVariants.map(workVariant => ({
-      name: `${work.name} ${workVariant.name}`,
-      tasks: workVariant.tasks,
-      workType: work.studyWork?.workType?.name || "Unknown",
-      description: work.description,
-      id: workVariant.id,
-    }))
-  );
 
-  const finishArray = Object.entries(workVariantsArrayFlatMap.reduce((acc: any, work) => {
-    const workType = work.workType || "Unknown";
-    if (!acc[workType]) {
-      acc[workType] = [];
-    }
-    acc[workType].push({
-      name: work.name,
-      description: work.description,
-      tasks: work.tasks,
-      id: work.id,
-    });
-    return acc;
-  }, {})).map(([workType, works]) => ({ workType, works }));
+  const finishArray = PrepareArrayToScormGeneration(works);
 
-  const scorm = new ScormGenerator("./scormData", finishArray);
+  const scorm = new ScormGenerator("./scormData", finishArray, "All courses");
   console.log('before generate');
   await scorm.generate();
   console.log('after generation');
   if (!existsSync("./scormPackage/scormcourse_v1.0.50_2025-03-11.zip")){
     return new Response("Error", {status: 500});
   }
-  else{
+
     console.log('here');
-    return Bun.file("./scormPackage/scormcourse_v1.0.50_2025-03-11.zip");
-  }
+    const folder = "./scormData";
+    try {
+      await rm(folder, { recursive: true, force: true });
+      await mkdir(folder); 
+      console.log(`Папка ${folder} очищена и пересоздана.`);
+    } catch (err) {
+      console.error(`Ошибка при очистке ${folder}:`, err);
+    }
+
+    const fileName = `Allcourses_v1.0.50_${new Date().toISOString().split('T')[0]}.zip`;
+    return Bun.file(`./scormPackage/${fileName}`);
 
 })
 
@@ -209,31 +199,18 @@ const app = new Elysia()
     },
   });
 
-  const workVariantsArrayFlatMap = works.flatMap(work => 
-    work.workVariants.map(workVariant => ({
-      name: `${work.name} ${workVariant.name}`,
-      tasks: workVariant.tasks,
-      workType: work.studyWork?.workType?.name || "Unknown",
-      description: work.description,
-      id: workVariant.id,
-    }))
-  );
+  const finishArray = PrepareArrayToScormGeneration(works);
 
-  const finishArray = Object.entries(workVariantsArrayFlatMap.reduce((acc: any, work) => {
-    const workType = work.workType || "Unknown";
-    if (!acc[workType]) {
-      acc[workType] = [];
-    }
-    acc[workType].push({
-      name: work.name,
-      description: work.description,
-      tasks: work.tasks,
-      id: work.id,
-    });
-    return acc;
-  }, {})).map(([workType, works]) => ({ workType, works }));
+  const course = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    select: {
+      name: true,
+    },
+  });
 
-  const scorm = new ScormGenerator("./scormData", finishArray);
+  const scorm = new ScormGenerator("./scormData", finishArray, course?.name || "Unknown");
   console.log('before generate');
   await scorm.generate();
   console.log('after generation')
@@ -241,10 +218,8 @@ const app = new Elysia()
   if (!existsSync("./scormPackage/scormcourse_v1.0.50_2025-03-11.zip")){
     return new Response("Error", {status: 500});
   }
-  else{
-    console.log('here');
-    return Bun.file("./scormPackage/scormcourse_v1.0.50_2025-03-11.zip");
-  }
+  const fileName = `${course?.name || "Unknown"}_v1.0.50_${new Date().toISOString().split('T')[0]}.zip`;
+  return Bun.file(`./scormPackage/${fileName}`);
 })
 
 
