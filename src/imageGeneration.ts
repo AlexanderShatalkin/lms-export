@@ -24,7 +24,6 @@ export async function getPaintImg(data:any[]){
 
     ctx.fillStyle ="white";
     ctx.fillRect(0, 0, size.width, size.height);
-
     data.forEach(path => {
         addPathToCanvas(path, ctx);
     });
@@ -33,12 +32,24 @@ export async function getPaintImg(data:any[]){
 
 }
 
+function getLineWidWidth(size: string): number{
+    switch(size){
+        case "Small": return 1;
+        case "Medium": return 2;
+        case "Large": return 3;
+        case "ExtraLarge": return 4;
+        default: return 2;
+    }
+}
+
 function addPathToCanvas(path:Path, ctx:CanvasRenderingContext2D){
     const points: Point[] = convertPathToPoints(path);
-    ctx.fillStyle = "black"; //TODO: change it to fill in the path
-    ctx.lineWidth = 2; //TODO: write a function that will get this parameter from size of path
-    ctx.beginPath();
+    ctx.fillStyle = path.fill.toLowerCase();
+    ctx.strokeStyle = path.fill.toLowerCase();
+    ctx.lineWidth = getLineWidWidth(path.size); 
+
     ctx.moveTo(path.x, path.y);
+    ctx.beginPath();
     points.forEach((point: Point) =>{
         ctx.lineTo(point.x, point.y);
     })

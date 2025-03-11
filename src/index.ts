@@ -8,7 +8,7 @@ import sharp from 'sharp';
 import { Answer } from "./interfaces";
 import ScormGenerator from "./scormGenerator/scormGenerator";
 import {writeFile} from "fs/promises"
-import { existsSync } from 'fs';
+import { existsSync, unlink } from 'fs';
 import {rm, mkdir} from "fs/promises";
 import { PrepareArrayToScormGeneration } from "./processArray";
 
@@ -155,7 +155,8 @@ const app = new Elysia()
   console.log('before generate');
   await scorm.generate();
   console.log('after generation');
-  if (!existsSync("./scormPackage/scormcourse_v1.0.50_2025-03-11.zip")){
+  const filePath = `./scormPackage/Allcourses_v1.0.50_${new Date().toISOString().split('T')[0]}.zip`;
+  if (!existsSync(filePath)){
     return new Response("Error", {status: 500});
   }
 
@@ -169,8 +170,16 @@ const app = new Elysia()
       console.error(`Ошибка при очистке ${folder}:`, err);
     }
 
-    const fileName = `Allcourses_v1.0.50_${new Date().toISOString().split('T')[0]}.zip`;
-    return Bun.file(`./scormPackage/${fileName}`);
+
+    const file = Bun.file(filePath);
+    unlink(filePath, (err:ErrnoException | null) => {
+      if (err) {
+          console.error("Error deleting file:", err);
+      } else {
+          console.log("File deleted successfully");
+      }
+  });
+    return file;
 
 })
 
@@ -214,12 +223,19 @@ const app = new Elysia()
   console.log('before generate');
   await scorm.generate();
   console.log('after generation')
-
-  if (!existsSync("./scormPackage/scormcourse_v1.0.50_2025-03-11.zip")){
+  const filePath = `${course?.name || "Unknown"}_v1.0.50_${new Date().toISOString().split('T')[0]}.zip`;
+  if (!existsSync(filePath)){
     return new Response("Error", {status: 500});
   }
-  const fileName = `${course?.name || "Unknown"}_v1.0.50_${new Date().toISOString().split('T')[0]}.zip`;
-  return Bun.file(`./scormPackage/${fileName}`);
+  const file = Bun.file(filePath);
+  unlink(filePath, (err:ErrnoException | null) => {
+    if (err) {
+        console.error("Error deleting file:", err);
+    } else {
+        console.log("File deleted successfully");
+    }
+});
+  return file;
 })
 
 

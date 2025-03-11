@@ -74,6 +74,7 @@ function getP(children:any, listType:string){
 
     const textRuns:any[] = [];
     children.forEach((child:any) => {
+        console.log(...getTextRun(child));
         textRuns.push(...getTextRun(child));
     });
 
