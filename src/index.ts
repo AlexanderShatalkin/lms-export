@@ -8,6 +8,7 @@ import sharp from 'sharp';
 import { Answer } from "./interfaces";
 import ScormGenerator from "./scormGenerator/scormGenerator";
 import {writeFile} from "fs/promises"
+import { existsSync } from 'fs';
 
 import PCreator from "./scormGenerator/htmlMaper/pCreator";
 import TableCreator from "./scormGenerator/htmlMaper/tableCreator";
@@ -29,7 +30,7 @@ const app = new Elysia()
   {
 
   })
-  
+
 .get("/testDoc", async ()=>{
   // await createTestDoc(content);
   // return Bun.file(file);
@@ -172,7 +173,14 @@ const app = new Elysia()
   const scorm = new ScormGenerator("./scormData", finishArray);
   console.log('before generate');
   await scorm.generate();
-  console.log('after generation')
+  console.log('after generation');
+  if (!existsSync("./scormPackage/scormcourse_v1.0.50_2025-03-11.zip")){
+    return new Response("Error", {status: 500});
+  }
+  else{
+    console.log('here');
+    return Bun.file("./scormPackage/scormcourse_v1.0.50_2025-03-11.zip");
+  }
 
 })
 
@@ -229,6 +237,14 @@ const app = new Elysia()
   console.log('before generate');
   await scorm.generate();
   console.log('after generation')
+
+  if (!existsSync("./scormPackage/scormcourse_v1.0.50_2025-03-11.zip")){
+    return new Response("Error", {status: 500});
+  }
+  else{
+    console.log('here');
+    return Bun.file("./scormPackage/scormcourse_v1.0.50_2025-03-11.zip");
+  }
 })
 
 

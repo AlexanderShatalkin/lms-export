@@ -1,5 +1,6 @@
 import path from "path";
 import fs from "fs/promises";
+import {rm, mkdir} from "fs/promises";
 import MainPageGenerator from "./mainPageGenerator";
 import WorkPageGenerator from "./workPageGenerator";
 
@@ -40,24 +41,29 @@ export default class ScormGenerator{
         this.generateMainPage()
 
         var scopackager = require('simple-scorm-packager');
-        scopackager({
-          version: '1.2', 
-          organization: 'LmsDot',
-          title: 'test',
-          language: 'en',
-          identifier: 'example_scorm_course',
-          masteryScore: 80,
-          startingPage: 'index.html', 
-          source: this.path, // Папка с контентом
-          package: {
-            zip: true,
-            outputFolder: "./scormPackage", // Папка для сохранения SCORM пакета
-            zipFilename: 'scorm_course.zip'
-          }
-        }, function() {
-          console.log('SCORM пакет успешно создан!');
+        const result = await new Promise<string>((resolve, reject) => {
+            scopackager({
+                version: '1.2',
+                organization: 'LmsDot',
+                title: 'test',
+                language: 'en',
+                identifier: 'example_scorm_course',
+                masteryScore: 80,
+                startingPage: 'index.html',
+                source: this.path, // Папка с контентом
+                package: {
+                    zip: true,
+                    name: 'scorm_course', // Имя SCORM пакета
+                    outputFolder: './scormPackage', // Папка для сохранения SCORM пакета
+                    zipFilename: 'scorm_course.zip',
+                }
+            }, function () {
+                console.log('SCORM пакет успешно создан!');
+                resolve("./scormPackage/scorm_course.zip");
+            });
         });
-        return "./scorm_course.zip";
+    
+        return result;
     }
 
     private async generateStyles():Promise<void>{
@@ -89,4 +95,15 @@ export default class ScormGenerator{
         await fs.writeFile(filePath, html)
 
     }
+
+    private async resetFolder(folder: string) {
+        try {
+          await rm(folder, { recursive: true, force: true });
+          await mkdir(folder); // Пересоздаём пустую папку
+          console.log(`Папка ${folder} очищена и пересоздана.`);
+        } catch (err) {
+          console.error(`Ошибка при очистке ${folder}:`, err);
+        }
+      }
+      
 }
