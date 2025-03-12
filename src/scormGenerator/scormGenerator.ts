@@ -84,7 +84,7 @@ export default class ScormGenerator{
     }
 
     private async generateWorkPage(work: any,):Promise<void> {
-        const generator = new WorkPageGenerator(work.id, work.name, work.tasks);
+        const generator = new WorkPageGenerator(work);
         const html = await generator.generate();
         const filePath = path.join(this.path, `${work.id}.html`);
         this.works.push({
@@ -98,7 +98,7 @@ export default class ScormGenerator{
     private async resetFolder(folder: string) {
         try {
           await rm(folder, { recursive: true, force: true });
-          await mkdir(folder); // Пересоздаём пустую папку
+          await mkdir(folder);
           console.log(`Папка ${folder} очищена и пересоздана.`);
         } catch (err) {
           console.error(`Ошибка при очистке ${folder}:`, err);

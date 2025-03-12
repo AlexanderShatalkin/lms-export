@@ -1,6 +1,7 @@
 import Handlebars from "handlebars";
 import PageGenerator from "./PageGenerator";
 import { workPageTemplate } from "../scormPagesPatterns/workPage";
+import { workVariantTemplate } from "../scormPagesPatterns/workVariantPage";
 import { HtmlCreator } from "./htmlMaper/htmlCreator";
 import PCreator from "./htmlMaper/pCreator";
 import ImgCreator from "./htmlMaper/imgCreator";
@@ -15,14 +16,14 @@ import ListManager from "./htmlMaper/listManager";
 
 export default class WorkPageGenerator implements PageGenerator{
     private title: string;
-    private tasks: any[];
+    private worksVariants: any[];
     private id: string;
     private mapping: {[key: string]: HtmlCreator} = {};
     
-    constructor(id: string, title: string, tasks: any[]){
-        this.title = title;
-        this.tasks = tasks;
-        this.id = id;
+    constructor(work:any){
+        this.title = work.name;
+        this.worksVariants = work.workVariants;
+        this.id = work.id;
 
         this.mapping["p"] = new PCreator();
         this.mapping["img"] = new ImgCreator();
@@ -34,9 +35,24 @@ export default class WorkPageGenerator implements PageGenerator{
         this.mapping["hr"] = new HrCreator();
     }
 
+    
     public async generate(): Promise<string>{
+        const workVariants = await Promise.all(
+            this.worksVariants.map(async (workVariant: any) => {
+                return this.generateWorkVariant(workVariant);
+            })
+        );
+        const html = workVariants.join("");
+        const data = {
+            title: this.title,
+            workVariantsHtml: html,
+        }
+        return Handlebars.compile(workPageTemplate)(data);
+    }
+
+    private async generateWorkVariant(work:any): Promise<string>{
         const tasks = await Promise.all(
-            this.tasks.map(async (task: any) => {
+            work.tasks.map(async (task: any) => {
                 const content = (task.content as Record<string, any>).content;
                 const listManager = new ListManager();
                 const htmlParts = await Promise.all(
@@ -53,11 +69,10 @@ export default class WorkPageGenerator implements PageGenerator{
         );
 
         const data = {
-            title: this.title,
+            title: work.name,
             tasks: tasks
         }
-        const workHtml =  Handlebars.compile(workPageTemplate)(data);
+        const workHtml =  Handlebars.compile(workVariantTemplate)(data);
         return workHtml;
-
     }
 }

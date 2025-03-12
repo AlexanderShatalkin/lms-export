@@ -26,3 +26,5 @@ export type Answer = {
   answer: Prisma.JsonValue | null,
   score: Score;
 };
+
+

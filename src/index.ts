@@ -10,7 +10,7 @@ import ScormGenerator from "./scormGenerator/scormGenerator";
 import {writeFile} from "fs/promises"
 import { existsSync, unlink } from 'fs';
 import {rm, mkdir} from "fs/promises";
-import { PrepareArrayToScormGeneration } from "./processArray";
+import { GroupWorksByWorkType } from "./processArray";
 
 import PCreator from "./scormGenerator/htmlMaper/pCreator";
 import TableCreator from "./scormGenerator/htmlMaper/tableCreator";
@@ -149,7 +149,8 @@ const app = new Elysia()
   });
 
 
-  const finishArray = PrepareArrayToScormGeneration(works);
+
+  const finishArray = GroupWorksByWorkType(works);
 
   const scorm = new ScormGenerator("./scormData", finishArray, "All courses");
   console.log('before generate');
@@ -208,7 +209,7 @@ const app = new Elysia()
     },
   });
 
-  const finishArray = PrepareArrayToScormGeneration(works);
+  const finishArray = GroupWorksByWorkType(works);
 
   const course = await prisma.course.findUnique({
     where: {
