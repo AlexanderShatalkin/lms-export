@@ -123,3 +123,13 @@ li {
     text-decoration: none;
     color: black;
 }
+
+.work-separator{
+    background-color: black;
+    height: 3px;
+}
+
+.toggle-symbol {
+    cursor: pointer;
+    margin-right: 10px;
+}

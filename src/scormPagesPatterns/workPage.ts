@@ -17,6 +17,28 @@ export const workPageTemplate = `
     <h1>{{title}}</h1>
     {{{workVariantsHtml}}}
 
+
+    <script>
+        const workHeaders = document.querySelectorAll('.work-header');
+
+        workHeaders.forEach(header => {
+            const toggleSymbol = header.querySelector('.toggle-symbol');
+            const taskList = header.nextElementSibling; // Получаем соседний элемент .task-list
+
+            // Обработчик клика
+            header.addEventListener('click', () => {
+                // Переключаем видимость списка заданий
+                if (taskList.style.display === 'none') {
+                    taskList.style.display = 'block';
+                    toggleSymbol.textContent = '▼'; 
+                } else {
+                    taskList.style.display = 'none';
+                    toggleSymbol.textContent = '▶'; 
+                }
+            });
+        });
+    </script>
+
 </body>
 </html>
 `

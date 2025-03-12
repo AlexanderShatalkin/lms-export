@@ -138,6 +138,7 @@ const app = new Elysia()
           id: true,
           name: true,
           tasks: true,
+          base: true,
         },
       },
       studyWork: {
@@ -199,6 +200,7 @@ const app = new Elysia()
           id: true,
           name: true,
           tasks: true,
+          base: true,
         },
       },
       studyWork: {

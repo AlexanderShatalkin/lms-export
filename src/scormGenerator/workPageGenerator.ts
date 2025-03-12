@@ -67,9 +67,9 @@ export default class WorkPageGenerator implements PageGenerator{
                 return `<div><h1 class="task-header">${task.name}</h1>${html}</div>`;
             })
         );
-
+        const title = work.base ? "Базовый" : work.name;
         const data = {
-            title: work.name,
+            title: title,
             tasks: tasks
         }
         const workHtml =  Handlebars.compile(workVariantTemplate)(data);
