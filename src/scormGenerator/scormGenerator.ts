@@ -3,6 +3,10 @@ import fs from "fs/promises";
 import {rm, mkdir} from "fs/promises";
 import MainPageGenerator from "./mainPageGenerator";
 import WorkPageGenerator from "./workPageGenerator";
+import { existsSync } from "fs";
+import { Exception } from "handlebars";
+import { unlink } from "fs";
+import { BunFile } from "bun";
 
 enum Style{
     None,
@@ -28,7 +32,7 @@ export default class ScormGenerator{
         this.style = style;
     }
 
-    public async generate():Promise<string>{
+    public async generate():Promise<BunFile>{
 
         await this.generateStyles();
 
@@ -40,6 +44,17 @@ export default class ScormGenerator{
 
         this.generateMainPage()
 
+        await this.createScormArchive()
+        const filePath = `./scormPackage/Allcourses_v1.0.50_${new Date().toISOString().split('T')[0]}.zip`;
+        const file = Bun.file(filePath);
+
+        this.ClearCreatedFiles();
+
+        return file;
+    }
+
+
+    private async createScormArchive(): Promise<string>{
         var scopackager = require('simple-scorm-packager');
         const result = await new Promise<string>((resolve, reject) => {
             scopackager({
@@ -61,7 +76,6 @@ export default class ScormGenerator{
                 resolve("./scormPackage/scorm_course.zip");
             });
         });
-    
         return result;
     }
 
@@ -95,13 +109,29 @@ export default class ScormGenerator{
 
     }
 
-    private async resetFolder(folder: string) {
+    private async ClearCreatedFiles():Promise<void>{
+        const filePath = `./scormPackage/Allcourses_v1.0.50_${new Date().toISOString().split('T')[0]}.zip`;
+        if (!existsSync(filePath)){
+            throw new Exception("generated file does not exist");
+        }
+        unlink(filePath, (err:ErrnoException | null) => {
+            if (err) {
+                console.error("Error deleting file:", err);
+            } else {
+                console.log("File deleted successfully");
+            }
+        });
+        const folder = "./scormData";
+        this.resetFolder(folder);
+    }
+
+    private async resetFolder(folder: string):Promise<void> {
         try {
-          await rm(folder, { recursive: true, force: true });
-          await mkdir(folder);
-          console.log(`Папка ${folder} очищена и пересоздана.`);
+            await rm(folder, { recursive: true, force: true });
+            await mkdir(folder); 
+            console.log(`Папка ${folder} очищена и пересоздана.`);
         } catch (err) {
-          console.error(`Ошибка при очистке ${folder}:`, err);
+            console.error(`Ошибка при очистке ${folder}:`, err);
         }
       }
       

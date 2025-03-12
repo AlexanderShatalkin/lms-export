@@ -154,34 +154,7 @@ const app = new Elysia()
   const finishArray = GroupWorksByWorkType(works);
 
   const scorm = new ScormGenerator("./scormData", finishArray, "All courses");
-  console.log('before generate');
-  await scorm.generate();
-  console.log('after generation');
-  const filePath = `./scormPackage/Allcourses_v1.0.50_${new Date().toISOString().split('T')[0]}.zip`;
-  if (!existsSync(filePath)){
-    return new Response("Error", {status: 500});
-  }
-
-    console.log('here');
-    const folder = "./scormData";
-    try {
-      await rm(folder, { recursive: true, force: true });
-      await mkdir(folder); 
-      console.log(`Папка ${folder} очищена и пересоздана.`);
-    } catch (err) {
-      console.error(`Ошибка при очистке ${folder}:`, err);
-    }
-
-
-    const file = Bun.file(filePath);
-    unlink(filePath, (err:ErrnoException | null) => {
-      if (err) {
-          console.error("Error deleting file:", err);
-      } else {
-          console.log("File deleted successfully");
-      }
-  });
-    return file;
+  return await scorm.generate();
 
 })
 
@@ -223,22 +196,7 @@ const app = new Elysia()
   });
 
   const scorm = new ScormGenerator("./scormData", finishArray, course?.name || "Unknown");
-  console.log('before generate');
-  await scorm.generate();
-  console.log('after generation')
-  const filePath = `${course?.name || "Unknown"}_v1.0.50_${new Date().toISOString().split('T')[0]}.zip`;
-  if (!existsSync(filePath)){
-    return new Response("Error", {status: 500});
-  }
-  const file = Bun.file(filePath);
-  unlink(filePath, (err:ErrnoException | null) => {
-    if (err) {
-        console.error("Error deleting file:", err);
-    } else {
-        console.log("File deleted successfully");
-    }
-});
-  return file;
+  return await scorm.generate();
 })
 
 
