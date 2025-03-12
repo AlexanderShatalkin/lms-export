@@ -1,8 +1,9 @@
 import { HtmlCreator } from "./htmlCreator";
 import { getPaintImg, getImageDimensions } from "../../imageGeneration";
+import { Paint } from "../../interfaces";
 
 export default class PaintCreator implements HtmlCreator{
-    async generate(element: any): Promise<string> {
+    async generate(element: Paint): Promise<string> {
         const data = element.data;
         const buffer = await getPaintImg(data);
         const size = getImageDimensions(data);

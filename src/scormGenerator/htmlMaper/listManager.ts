@@ -1,3 +1,4 @@
+import { TaskContentElement } from "../../interfaces";
 
 enum Tag{
     None,
@@ -22,8 +23,15 @@ export default class ListManager{
     }
 
 
-    public getHtmlTemplate(element: any):string{
-        const elementTag = this.getTagFromListType(element.listStyleType);
+    public getHtmlTemplate(element: TaskContentElement):string{
+        let elementTag;
+        if (element.type === "p"){
+            elementTag = this.getTagFromListType(element.listStyleType || "none");
+        }
+        else 
+        {
+            elementTag = Tag.None;
+        }
         const listState = this.getListState(elementTag);
         const template = this.getHtmlTemplateByState(elementTag, listState);
         this.currentTag = elementTag;

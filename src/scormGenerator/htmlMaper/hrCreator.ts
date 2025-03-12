@@ -1,7 +1,8 @@
+import { Hr, TaskContentElement } from "../../interfaces";
 import { HtmlCreator } from "./htmlCreator";
 
 export default class HrCreator implements HtmlCreator{
-    generate(element: any): string {
+    generate(element: Hr): string {
         return `<hr>`;
     }
 }   

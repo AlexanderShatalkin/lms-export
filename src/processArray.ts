@@ -1,24 +1,25 @@
 import { Prisma, StudyWork, Work, WorkVariant } from "../prisma/client";
+import { WorkWithVariants } from "./interfaces";
 
-type WorkWithVariants = Prisma.WorkGetPayload<{select: {
-  id: true,
-  name: true,
-  description: true,
-  course: true,
-  workVariants: {
-    select: {
-      id: true,
-      name: true,
-      tasks: true,
-      base: true,
-    },
-  },
-  studyWork: {
-    select: {
-      workType: true,
-    },
-  },
-}}>;
+// type WorkWithVariants = Prisma.WorkGetPayload<{select: {
+//   id: true,
+//   name: true,
+//   description: true,
+//   course: true,
+//   workVariants: {
+//     select: {
+//       id: true,
+//       name: true,
+//       tasks: true,
+//       base: true,
+//     },
+//   },
+//   studyWork: {
+//     select: {
+//       workType: true,
+//     },
+//   },
+// }}>;
 
 export function GroupWorksByWorkType(works:WorkWithVariants[]):{workType: string, works: WorkWithVariants[]}[]{
 

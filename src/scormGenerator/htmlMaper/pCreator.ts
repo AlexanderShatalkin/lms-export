@@ -1,17 +1,18 @@
+import { Paragraph, ParagraphChild } from "../../interfaces";
 import { HtmlCreator } from "./htmlCreator";
 
 export default class PCreator implements HtmlCreator{
     static listOrder: number = 0;
     
-    generate(element: any): string {
+    generate(element: Paragraph): string {
         let html = ""
-        element.children.forEach((child:any) => {
+        element.children.forEach(child => {
             html += this.generateTagWithStyles(child);
         });
         return `<div>${html}</div>`
     }
 
-    private generateTagWithStyles(element: any): string{
+    private generateTagWithStyles(element: ParagraphChild): string{
         const styles: string[] = [];
         if (element.bold) styles.push("font-weight: bold");
         if (element.italic) styles.push("font-style:italic");

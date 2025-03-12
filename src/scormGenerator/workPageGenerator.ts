@@ -12,15 +12,24 @@ import HeaderCreator from "./htmlMaper/headerCreator";
 import BlockquoteCreator from "./htmlMaper/blockquoteCreator";
 import HrCreator from "./htmlMaper/hrCreator";
 import ListManager from "./htmlMaper/listManager";
+import { TaskContentElement, WorkWithVariants } from "../interfaces";
+import { JsonValue } from "@prisma/client/runtime/library";
+import { Task } from "../../prisma/client";
+import { TaskContent } from "../interfaces";
 
+interface WorkVariant{
+    tasks: Task[],
+    name: string,
+    base: boolean,
+}
 
 export default class WorkPageGenerator implements PageGenerator{
     private title: string;
-    private worksVariants: any[];
+    private worksVariants: WorkVariant[];
     private id: string;
     private mapping: {[key: string]: HtmlCreator} = {};
     
-    constructor(work:any){
+    constructor(work:WorkWithVariants){
         this.title = work.name;
         this.worksVariants = work.workVariants;
         this.id = work.id;
@@ -38,7 +47,7 @@ export default class WorkPageGenerator implements PageGenerator{
     
     public async generate(): Promise<string>{
         const workVariants = await Promise.all(
-            this.worksVariants.map(async (workVariant: any) => {
+            this.worksVariants.map(async (workVariant: WorkVariant) => {
                 return this.generateWorkVariant(workVariant);
             })
         );
@@ -50,13 +59,13 @@ export default class WorkPageGenerator implements PageGenerator{
         return Handlebars.compile(workPageTemplate)(data);
     }
 
-    private async generateWorkVariant(work:any): Promise<string>{
+    private async generateWorkVariant(work:WorkVariant): Promise<string>{
         const tasks = await Promise.all(
-            work.tasks.map(async (task: any) => {
-                const content = (task.content as Record<string, any>).content;
+            work.tasks.map(async (task: Task) => {
+                const content = (task.content as unknown as TaskContent).content;
                 const listManager = new ListManager();
                 const htmlParts = await Promise.all(
-                    content.map(async (element: any) => {
+                    content.map(async (element: TaskContentElement) => {
                         const wrapTemplate = listManager.getHtmlTemplate(element);
                         const html = await this.mapping[element.type].generate(element);
                         return wrapTemplate.split("{{{html}}}").join(html)

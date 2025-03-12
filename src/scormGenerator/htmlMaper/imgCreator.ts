@@ -1,8 +1,9 @@
+import { Image, TaskContentElement } from "../../interfaces";
 import { HtmlCreator } from "./htmlCreator";
 import sharp from "sharp";
 
 export default class ImgCreator implements HtmlCreator{
-    async generate(element: any): Promise<string> {
+    async generate(element: Image): Promise<string> {
             const base64Data = element.url.replace(/^data:image\/\w+;base64,/, '');
             const imageBuffer = Buffer.from(base64Data, 'base64');
         

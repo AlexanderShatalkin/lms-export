@@ -7,6 +7,7 @@ import { existsSync } from "fs";
 import { Exception } from "handlebars";
 import { unlink } from "fs";
 import { BunFile } from "bun";
+import { WorkWithVariants } from "../interfaces";
 
 enum Style{
     None,
@@ -16,12 +17,12 @@ enum Style{
 export default class ScormGenerator{
     private path: string;
     private course: string;
-    private works: any[];
+    private works: {title: string, url: string}[];
     private style = Style.Default;
-    private sections: {workType: string, works: any[]}[];
+    private sections: {workType: string, works: WorkWithVariants[]}[];
 
 
-    constructor(path: string, sections: any, course: string){
+    constructor(path: string, sections: {workType: string, works: WorkWithVariants[]}[], course: string){
         this.path = path;
         this.works = [];
         this.sections = sections;
@@ -37,7 +38,7 @@ export default class ScormGenerator{
         await this.generateStyles();
 
         await Promise.all(this.sections.map(async (section) => {
-            await Promise.all(section.works.map(async (work: any) => {
+            await Promise.all(section.works.map(async (work: WorkWithVariants) => {
                 await this.generateWorkPage(work);
             }))
         }));
@@ -97,7 +98,7 @@ export default class ScormGenerator{
         await fs.writeFile(filePath, html);
     }
 
-    private async generateWorkPage(work: any,):Promise<void> {
+    private async generateWorkPage(work: WorkWithVariants):Promise<void> {
         const generator = new WorkPageGenerator(work);
         const html = await generator.generate();
         const filePath = path.join(this.path, `${work.id}.html`);

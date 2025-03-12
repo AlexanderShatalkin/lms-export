@@ -1,3 +1,5 @@
+import { TaskContentElement } from "../../interfaces";
+
 export interface HtmlCreator{
-    generate(element: any): string | Promise<string>;
+    generate(element: TaskContentElement): string | Promise<string>;
 }
