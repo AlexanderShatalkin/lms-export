@@ -30,9 +30,7 @@ export default class WorkPageGenerator implements PageGenerator{
     private mapping: {[key: string]: HtmlCreator} = {};
     
     constructor(work:WorkWithVariants){
-        this.title = work.name;
-        this.worksVariants = work.workVariants;
-        this.id = work.id;
+
 
         this.mapping["p"] = new PCreator();
         this.mapping["img"] = new ImgCreator();
@@ -42,6 +40,12 @@ export default class WorkPageGenerator implements PageGenerator{
         this.mapping["h1"] = this.mapping["h2"] = this.mapping["h3"] = this.mapping["h4"] = this.mapping["h5"] = this.mapping["h6"] = new HeaderCreator();
         this.mapping["blockquote"] = new BlockquoteCreator();
         this.mapping["hr"] = new HrCreator();
+
+
+        this.title = work.name;
+        this.worksVariants = work.workVariants;
+        this.id = work.id;
+
     }
 
     

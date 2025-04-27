@@ -2,8 +2,6 @@ import { Paragraph, ParagraphChild } from "../../interfaces";
 import { HtmlCreator } from "./htmlCreator";
 
 export default class PCreator implements HtmlCreator{
-    static listOrder: number = 0;
-    
     generate(element: Paragraph): string {
         let html = ""
         element.children.forEach(child => {
