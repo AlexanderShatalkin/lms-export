@@ -36,7 +36,7 @@ const app = new Elysia()
 .get("/testDoc", async ()=>{
   // await createTestDoc(content);
   // return Bun.file(file);
-  let json = require("./exampleData/editor.json");
+  let json = require("./exampleData/task3.json");
 
   console.log('before doc')
   const doc = await createTestDocument(json["content"]);

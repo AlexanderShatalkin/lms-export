@@ -66,8 +66,8 @@ function mapHexToHighlight(hexColor: string): "none" | "black" | "blue" | "cyan"
         "#FFFFFF": "white",
         "#000000": "black",
     };
-
-    return colorMapping[hexColor.toUpperCase()] || "none";  // Возвращаем "none" по умолчанию
+    console.log(colorMapping[hexColor.toUpperCase()] || "black");
+    return colorMapping[hexColor.toUpperCase()] || "black"; 
 }
 
 function getP(children:any, listType:string){
@@ -88,6 +88,26 @@ function getP(children:any, listType:string){
     })
 }
 
+function processColor(color:any){
+    if (color.length == 6){
+        return color
+    }
+    
+        const matches = color.match(/\d+/g);
+        if (!matches || matches.length < 3) {
+          throw new Error("Неверный формат строки");
+        }
+      
+        const [r, g, b] = matches.slice(0, 3).map((n:any) => {
+          const hex = parseInt(n).toString(16);
+          return hex.length === 1 ? '0' + hex : hex;
+        });
+      
+        return r + g + b;
+}
+
+
+
 function getTextRun(child:any){
     const lines = child.text.split("\n");
     return lines.map((line: string, index: number) => {
@@ -103,7 +123,7 @@ function getTextRun(child:any){
             strike: child.strikethrough ? true : false,
             superScript: child.superscript ? true: false,
             subScript: child.subscript ? true: false,
-            color: child.color ? child.color : "000000",
+            color: child.color ? processColor(child.color) : "000000",
             highlight : mapHexToHighlight(child.backgroundColor || "#FFFFFF"),
     })
     return wordChild;
@@ -125,9 +145,9 @@ export function getPWordElement(element:any){
     return [getP(children, listType)];
 }
 
-
 export async function getImg(element:any){
     const base64Data = element.url.replace(/^data:image\/\w+;base64,/, '');
+    console.log('here')
     const imageBuffer = Buffer.from(base64Data, 'base64');
 
     const metadata = await sharp(imageBuffer).metadata();

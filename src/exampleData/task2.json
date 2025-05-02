@@ -1,0 +1,215 @@
+{
+    "version": 4,
+    "content": [
+      {
+        "children": [
+          {
+            "text": "Дана грамматика, построить  список ситуаций и структур для вывода слова \"bxy\""
+          }
+        ],
+        "type": "p",
+        "id": "D8kckvt0fK"
+      },
+      {
+        "type": "p",
+        "id": "4ZHVASoUmb",
+        "children": [
+          {
+            "text": "S' → S"
+          }
+        ],
+        "indent": 1,
+        "listStyleType": "decimal"
+      },
+      {
+        "type": "p",
+        "id": "bOIxE19hP0",
+        "indent": 1,
+        "listStyleType": "decimal",
+        "children": [
+          {
+            "text": "S → CD"
+          }
+        ],
+        "listStart": 2
+      },
+      {
+        "type": "p",
+        "id": "zTeyxIe5-I",
+        "indent": 1,
+        "listStyleType": "decimal",
+        "listStart": 3,
+        "children": [
+          {
+            "text": "D → AB"
+          }
+        ]
+      },
+      {
+        "type": "p",
+        "id": "Ea9u8UJZXK",
+        "indent": 1,
+        "listStyleType": "decimal",
+        "listStart": 4,
+        "children": [
+          {
+            "text": "A → x"
+          }
+        ]
+      },
+      {
+        "type": "p",
+        "id": "dqdshP2ZF_",
+        "indent": 1,
+        "listStyleType": "decimal",
+        "listStart": 5,
+        "children": [
+          {
+            "text": "A → EA"
+          }
+        ]
+      },
+      {
+        "type": "p",
+        "id": "Vk3Su4QT_b",
+        "indent": 1,
+        "listStyleType": "decimal",
+        "listStart": 6,
+        "children": [
+          {
+            "text": "E → x"
+          }
+        ]
+      },
+      {
+        "type": "p",
+        "id": "sGl_LpE-NK",
+        "indent": 1,
+        "listStyleType": "decimal",
+        "listStart": 7,
+        "children": [
+          {
+            "text": "B → y "
+          }
+        ]
+      },
+      {
+        "type": "p",
+        "id": "YOErrlngHV",
+        "children": [
+          {
+            "text": ""
+          }
+        ]
+      },
+      {
+        "type": "p",
+        "id": "-GT29HYc0e",
+        "children": [
+          {
+            "text": "Заполнить в виде таблицы"
+          }
+        ]
+      },
+      {
+        "type": "p",
+        "id": "KSo2b7pN3l",
+        "children": [
+          {
+            "text": ""
+          }
+        ]
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "text": "Структуры"
+                      }
+                    ],
+                    "type": "p",
+                    "id": "FnXx4gSs2G"
+                  }
+                ],
+                "type": "td",
+                "id": "HVhZm0w47R"
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "text": "Объяснения"
+                      }
+                    ],
+                    "type": "p",
+                    "id": "imItffrJKY"
+                  }
+                ],
+                "type": "td",
+                "id": "lN8nxtu3Ve"
+              }
+            ],
+            "type": "tr",
+            "id": "ST7AiaKtZG"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "text": "S' → *S, 0"
+                      }
+                    ],
+                    "type": "p",
+                    "id": "AYQkBJvVEE"
+                  }
+                ],
+                "type": "td",
+                "id": "2JKUnATCbF"
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "text": ""
+                      }
+                    ],
+                    "type": "p",
+                    "id": "Kmfa_bPLSn"
+                  }
+                ],
+                "type": "td",
+                "id": "N9WkcZbywN"
+              }
+            ],
+            "type": "tr",
+            "id": "NpyFQSYzJT"
+          }
+        ],
+        "type": "table",
+        "id": "xEp89MNsVz",
+        "colSizes": [
+          387,
+          336
+        ]
+      },
+      {
+        "children": [
+          {
+            "text": ""
+          }
+        ],
+        "type": "p",
+        "id": "h2PaWKJ1BW"
+      }
+    ]
+  }

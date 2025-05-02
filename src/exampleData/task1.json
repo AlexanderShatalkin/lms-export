@@ -1,0 +1,97 @@
+{
+    "version": 4,
+    "content": [
+      {
+        "children": [
+          {
+            "text": "Дана КС-грамматика с правилами:"
+          }
+        ],
+        "type": "p",
+        "id": "CrBNyIEJez"
+      },
+      {
+        "type": "p",
+        "id": "-mxfR4caQb",
+        "children": [
+          {
+            "text": "(1-2) E → E+T  | T"
+          }
+        ]
+      },
+      {
+        "type": "p",
+        "id": "7mleBCCmW0",
+        "children": [
+          {
+            "text": "(3-4) T → T*P | P"
+          }
+        ]
+      },
+      {
+        "type": "p",
+        "id": "CfT1l1wxRk",
+        "children": [
+          {
+            "text": "(5-6) P → i | (E)"
+          }
+        ]
+      },
+      {
+        "type": "p",
+        "id": "tzEKPfaRpG",
+        "children": [
+          {
+            "text": ""
+          }
+        ]
+      },
+      {
+        "children": [
+          {
+            "text": "Написать левосторонний вывод цепочки i*(i);"
+          }
+        ],
+        "type": "p",
+        "indent": 1,
+        "listStyleType": "decimal",
+        "id": "n1MCXZsiVT"
+      },
+      {
+        "type": "p",
+        "indent": 1,
+        "listStyleType": "decimal",
+        "id": "d6-cF1HKo2",
+        "children": [
+          {
+            "text": "Записать левый синтаксический разбор;"
+          }
+        ],
+        "listStart": 2
+      },
+      {
+        "type": "p",
+        "indent": 1,
+        "listStyleType": "decimal",
+        "id": "nIGJXUtE2H",
+        "listStart": 3,
+        "children": [
+          {
+            "text": "Построить дерево вывода;"
+          }
+        ]
+      },
+      {
+        "type": "p",
+        "indent": 1,
+        "listStyleType": "decimal",
+        "id": "AiG73ZKVQf",
+        "listStart": 4,
+        "children": [
+          {
+            "text": "Выполнить правый обход дерева и записать правый синтаксический разбор"
+          }
+        ]
+      }
+    ]
+  }
