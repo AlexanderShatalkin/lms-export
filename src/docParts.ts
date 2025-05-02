@@ -6,6 +6,7 @@ import * as fs from "fs";
 import { getPaintImg, getImageDimensions } from "./imageGeneration";
 import { Score, Task, User, UserWorkAnswer } from "../prisma/client";
 import {Answer} from "./interfaces";
+import fetch from 'node-fetch';
 
 type MappingFunction = (element: any) => any;
 
@@ -66,8 +67,7 @@ function mapHexToHighlight(hexColor: string): "none" | "black" | "blue" | "cyan"
         "#FFFFFF": "white",
         "#000000": "black",
     };
-    console.log(colorMapping[hexColor.toUpperCase()] || "black");
-    return colorMapping[hexColor.toUpperCase()] || "black"; 
+    return colorMapping[hexColor.toUpperCase()] || "white"; 
 }
 
 function getP(children:any, listType:string){
@@ -145,10 +145,23 @@ export function getPWordElement(element:any){
     return [getP(children, listType)];
 }
 
+
+
 export async function getImg(element:any){
-    const base64Data = element.url.replace(/^data:image\/\w+;base64,/, '');
-    console.log('here')
-    const imageBuffer = Buffer.from(base64Data, 'base64');
+    let imageBuffer;
+
+    if (element.url.startsWith('data:image/')) {
+        const base64Data = element.url.replace(/^data:image\/\w+;base64,/, '');
+        imageBuffer = Buffer.from(base64Data, 'base64');
+    } else if (element.url.startsWith('http')) {
+        const response = await fetch(element.url);
+        if (!response.ok) {
+            throw new Error(`Ошибка загрузки изображения: ${response.statusText}`);
+        }
+        imageBuffer = await response.buffer();
+    } else {
+        throw new Error('Неподдерживаемый формат изображения');
+    }
 
     const metadata = await sharp(imageBuffer).metadata();
     const {width, height} = {width:metadata.width, height:metadata.height}
