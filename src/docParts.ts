@@ -89,7 +89,7 @@ function getP(children:any, listType:string){
 }
 
 function processColor(color:any){
-    if (color.length == 6){
+    if (color.length == 7){
         return color
     }
     
