@@ -58,7 +58,7 @@ src/ # Исходный код приложения
 1. Клонируйте репозиторий
 
 ```bash
-git clone 
+git clone https://vcs.uni-dubna.ru/ShAM.21/2025-ShatalkinAlexander-LmsdotExportModule.git
 ```
 
 2. Установите зависимости и запустите
