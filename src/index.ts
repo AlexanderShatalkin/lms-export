@@ -33,27 +33,6 @@ const app = new Elysia()
 
   })
 
-.get("/testDoc", async ()=>{
-  // await createTestDoc(content);
-  // return Bun.file(file);
-  let json = require("./exampleData/task4.json");
-
-  console.log('before doc')
-  const doc = await createTestDocument(json["content"]);
-  
-  console.log('before buffer')
-  const buffer:any = await Packer.toBuffer(doc);
-
-  // await fs.writeFileSync("work.docx", buffer);
-  // return Bun.file("work.docx");\
-  console.log('after buffer');
-  return new Response(buffer, {
-    headers: {
-      "Content-Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      "Content-Disposition": 'attachment; filename="GeneratedDocument.docx"',
-    },
-  });
-})
 
 .get("/tasksDoc/:studyGroupId", async({params: {studyGroupId}}) => {
   const studyGroup = await prisma.studyGroup.findUnique({
@@ -88,7 +67,6 @@ const app = new Elysia()
       },
     });
   }
-  // return studyGroup?.course.taskTemplates[0];
 
 })
 
