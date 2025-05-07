@@ -58,3 +58,5 @@ migrations
 /prisma
 
 *.zip
+
+./src/exampleData
